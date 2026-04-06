@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe — Chainage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #0a0f1e; --ink2: #2d3a52; --muted: #6b7a96;
+      --border: #e2e7f0; --bg: #f7f9fc; --white: #fff;
+      --accent: #1a56db; --accent2: #0e3fa8; --green: #059669;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-mark { width: 30px; height: 30px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+    .logo-mark svg { width: 16px; height: 16px; }
+    .logo-text { font-size: 18px; font-weight: 700; color: var(--ink); }
+    .sign-out { font-size: 13px; color: var(--muted); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; }
+    .sign-out:hover { color: var(--ink); }
+    main { max-width: 900px; margin: 0 auto; padding: 64px 24px; }
+    .heading { text-align: center; margin-bottom: 48px; }
+    .trial-note { display: inline-block; background: #f0fdf4; color: var(--green); font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid #bbf7d0; margin-bottom: 16px; }
+    h1 { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+    .sub { font-size: 16px; color: var(--muted); }
+    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .plan { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 28px; transition: box-shadow 0.2s; }
+    .plan:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+    .plan.popular { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); position: relative; }
+    .pop-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .plan-name { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .plan-price { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 4px; }
+    .plan-period { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .plan-features { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 9px; }
+    .plan-features li { font-size: 13px; color: var(--ink2); display: flex; align-items: flex-start; gap: 7px; }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .btn-subscribe { display: block; width: 100%; text-align: center; padding: 12px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; text-decoration: none; }
+    .btn-outline { background: var(--bg); color: var(--ink2); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-solid { background: var(--accent); color: white; }
+    .btn-solid:hover { background: var(--accent2); }
+    .guarantee { text-align: center; margin-top: 32px; font-size: 13px; color: var(--muted); }
+    .guarantee strong { color: var(--ink); }
+    @media (max-width: 700px) { .plans { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 18 18" fill="none"><path d="M2 14L6 8L10 11L14 4L16 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="16" x2="16" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="logo-text">Chainage</span>
+  </a>
+  <button class="sign-out" onclick="handleSignOut()">Sign out</button>
+</nav>
+<main>
+  <div class="heading">
+    <div class="trial-note">✓ 14-day free trial included</div>
+    <h1>Choose your plan</h1>
+    <p class="sub">Your trial has ended. Subscribe to continue using Chainage.</p>
+  </div>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-name">Individual</div>
+      <div class="plan-price">£49</div>
+      <div class="plan-period">per month · billed monthly</div>
+      <ul class="plan-features">
+        <li>1 user</li>
+        <li>Unlimited projects</li>
+        <li>Full time-chainage tool</li>
+        <li>Risk register + P50/P80/P90</li>
+        <li>PDF &amp; PNG export</li>
+        <li>P6 &amp; Excel sync</li>
+        <li>Email support</li>
+      </ul>
+      <button class="btn-subscribe btn-outline" onclick="subscribe('individual')">Subscribe — £49/mo</button>
+    </div>
+    <div class="plan popular">
+      <div class="pop-badge">Most Popular</div>
+      <div class="plan-name">Team</div>
+      <div class="plan-price">£149</div>
+      <div class="plan-period">per month · billed monthly</div>
+      <ul class="plan-features">
+        <li>Up to 5 users</li>
+        <li>Everything in Individual</li>
+        <li>Priority support</li>
+        <li>Early access to new features</li>
+        <li>Onboarding session</li>
+      </ul>
+      <button class="btn-subscribe btn-solid" onclick="subscribe('team')">Subscribe — £149/mo</button>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">£399</div>
+      <div class="plan-period">per month · billed monthly</div>
+      <ul class="plan-features">
+        <li>Unlimited users</li>
+        <li>Everything in Team</li>
+        <li>Custom export branding</li>
+        <li>Phone &amp; video support</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <button class="btn-subscribe btn-outline" onclick="subscribe('enterprise')">Subscribe — £399/mo</button>
+    </div>
+  </div>
+  <p class="guarantee">🔒 <strong>Cancel any time.</strong> No long-term contracts. Secure payments via Stripe.</p>
+</main>
+
+<script>
+  const SUPABASE_URL     = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  // Stripe payment links — replace with your actual Stripe Payment Link URLs
+  // Create these in Stripe Dashboard → Payment Links
+  const STRIPE_LINKS = {
+    individual: 'YOUR_STRIPE_INDIVIDUAL_LINK',
+    team:       'YOUR_STRIPE_TEAM_LINK',
+    enterprise: 'YOUR_STRIPE_ENTERPRISE_LINK',
+  };
+
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function subscribe(plan) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    // Append user email to Stripe link so they don't have to type it again
+    const link = STRIPE_LINKS[plan];
+    const url  = link + '?prefilled_email=' + encodeURIComponent(session.user.email);
+    window.location.href = url;
+  }
+
+  async function handleSignOut() {
+    const { createClient } = supabase;
+    const sb2 = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    await sb2.auth.signOut();
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>

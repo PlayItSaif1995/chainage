@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="white">
+<head>
+  <meta charset="UTF-8">
+  <title>Time-Chainage Planner</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/14.3.0/handsontable.full.min.css">
+</head>
+<body>
+
+<!-- ── FILE EXPLORER ── -->
+<!-- REMOVED: browser-based file explorer replaced by native PC file ops via download/upload -->
+
+<!-- ── MOVE DIALOG ── (kept for potential future use, hidden) -->
+<div id="moveDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h3>Move to folder…</h3>
+    <div id="moveFolderTree"></div>
+    <div style="margin-top:12px">
+      <button onclick="confirmMove()">Move Here</button>
+      <button onclick="closeMoveDialog()" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RENAME DIALOG ── -->
+<div id="renameDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h3>Rename</h3>
+    <input id="renameInput" style="width:100%;padding:6px;font-size:14px">
+    <div style="margin-top:12px">
+      <button onclick="confirmRename()">Rename</button>
+      <button onclick="closeRenameDialog()" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SAVE AS DIALOG ── -->
+<div id="saveAsDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:400px">
+    <h3>💾 Save File</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px 0">Choose a name for your file before it downloads to your computer.</p>
+    <label style="font-size:13px;font-weight:bold;margin-top:0">File name</label>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <input id="saveAsInput"
+             style="flex:1;padding:8px 10px;font-size:14px;width:auto;border-radius:5px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)"
+             placeholder="e.g. M1-J15-TC-Rev1"
+             onkeydown="if(event.key==='Enter')confirmSaveAs();if(event.key==='Escape')closeSaveAsDialog()">
+      <span style="font-size:13px;color:var(--text-muted);white-space:nowrap;flex-shrink:0">.tcplan</span>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px;align-items:center">
+      <button onclick="confirmSaveAs()" style="background:#28a745;color:#fff;padding:7px 20px;margin-top:0;font-weight:bold">💾 Download</button>
+      <button onclick="closeSaveAsDialog()" class="btn-secondary" style="margin-top:0">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEGEND MODAL ── -->
+<div id="legendModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:680px;max-height:85vh;display:flex;flex-direction:column">
+    <h3>🗺 Programme Legend</h3>
+    <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+      <label style="display:flex;align-items:center;gap:6px;margin:0;cursor:pointer;font-size:13px">
+        <input type="radio" name="legendMode" value="groups" checked onchange="renderLegendModal()"> Categories &amp; Sub-groups
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;margin:0;cursor:pointer;font-size:13px">
+        <input type="radio" name="legendMode" value="activities" onchange="renderLegendModal()"> All Activities
+      </label>
+    </div>
+    <div id="legendModalContent" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:12px;background:var(--bg-secondary)"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+      <button onclick="printLegend()" style="background:#8e44ad;color:#fff">🖨 Print Legend</button>
+      <button onclick="document.getElementById('legendModal').style.display='none'" class="btn-secondary">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ONBOARDING WELCOME MODAL ── -->
+<div id="onboardingModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:540px;text-align:center">
+    <div style="font-size:48px;margin-bottom:8px">📐</div>
+    <h2 style="margin-bottom:6px">Welcome to Time-Chainage Planner</h2>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">A professional programme tool for linear infrastructure projects.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-bottom:20px">
+      <div class="onboard-step">
+        <div class="onboard-step-num">1</div>
+        <div><strong>Set your timeline</strong><br><span>Go to ⚙️ Settings — set your project start/end dates and chainage range, then Apply.</span></div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-step-num">2</div>
+        <div><strong>Add activities</strong><br><span>Go to ✏️ Activities — fill in a name, dates, chainages and click Save Activity. Or use 🔄 Sync to bulk import from Excel.</span></div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-step-num">3</div>
+        <div><strong>Organise with groups</strong><br><span>Go to 📂 Grouping — create categories and sub-groups to colour-code and filter your programme.</span></div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-step-num">4</div>
+        <div><strong>Export &amp; share</strong><br><span>Use 📤 Export to download as PDF, PNG or Excel. The 📊 Dashboard gives senior leadership a one-page summary.</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button onclick="openSamplePicker();document.getElementById('onboardingModal').style.display='none'" style="background:#27ae60;color:#fff">▶ Load Sample Project</button>
+      <button onclick="document.getElementById('onboardingModal').style.display='none'" style="background:var(--tab-active-bg);color:#fff">Start from Scratch</button>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:12px">
+      <a href="#" onclick="document.getElementById('onboardingModal').style.display='none';openTab2('settings')" style="color:var(--tab-active-bg)">Go straight to Settings →</a>
+    </p>
+  </div>
+</div>
+
+<!-- ── SAMPLE PROJECT PICKER MODAL ── -->
+<div id="samplePickerModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:580px">
+    <h3>▶ Load a Sample Project</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Choose a sample to explore. <strong>Your current work will be replaced</strong> — auto-save means you can Ctrl+Z to recover it.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+
+      <div class="sample-card" onclick="loadSample(1)">
+        <div class="sample-card-icon">🛣️</div>
+        <div>
+          <div class="sample-card-title">Highway Improvement Scheme</div>
+          <div class="sample-card-desc">A linear road project with 3 chainage zones. Shows a full construction sequence: Excavation → Drainage → Structures → Sub-base → FRC Slab → Surfacing, with dependency links, date markers, and varied milestone shapes (diamonds, stars, flags).</div>
+          <div class="sample-card-tags"><span>3 zones</span><span>27 links</span><span>5 work categories</span><span>dependency-driven sequence</span></div>
+        </div>
+      </div>
+
+      <div class="sample-card" onclick="loadSample(2)">
+        <div class="sample-card-icon">🔗</div>
+        <div>
+          <div class="sample-card-title">Multi-Zone Critical Path Demo</div>
+          <div class="sample-card-desc">5 independent zones each with their own gang-based construction chain: Deep Drainage → Pile Caps → Shallow Drainage. Each zone drives its own star milestone ("Zone X Complete"). Designed to demonstrate multiple simultaneous critical paths and gang grouping.</div>
+          <div class="sample-card-tags"><span>5 zones</span><span>gang-based</span><span>line shapes</span><span>5 critical path targets</span></div>
+        </div>
+      </div>
+
+      <div class="sample-card" onclick="loadSample(3)">
+        <div class="sample-card-icon">🏗️</div>
+        <div>
+          <div class="sample-card-title">Subcontractor Programme</div>
+          <div class="sample-card-desc">Works divided by subcontractor: Blackwells (Earthworks) → EKFB (Bridge FRC: blinding, foundations, wingwalls, abutments) → William Hare (Steel bridge erection) → Clancy (Drainage & expansion joints) → Project Completion. Demonstrates contractor grouping and sequential handover.</div>
+          <div class="sample-card-tags"><span>4 contractors</span><span>bridge sequence</span><span>contractor grouping</span><span>handover logic</span></div>
+        </div>
+      </div>
+
+      <div class="sample-card" onclick="loadSample(4)">
+        <div class="sample-card-icon">📐</div>
+        <div>
+          <div class="sample-card-title">Baseline Comparison</div>
+          <div class="sample-card-desc">A road widening project delayed 8 weeks by a utility clash. The original planned programme is saved as a baseline — enable "Show Baselines" to see the ghost overlay showing exactly where each activity has slipped against the original dates.</div>
+          <div class="sample-card-tags"><span>baseline ghost overlay</span><span>delay scenario</span><span>2 zones</span><span>4 risks</span></div>
+        </div>
+      </div>
+
+      <div class="sample-card" onclick="loadSample(5)">
+        <div class="sample-card-icon">🚆</div>
+        <div>
+          <div class="sample-card-title">Rail Possession Programme</div>
+          <div class="sample-card-desc">5 weekend/holiday possessions (Easter, May BH, June, August, Christmas) on a 2000m mainline. Track renewal gangs, S&C panel replacements, OLE mast work and signalling commissioning all working within possession windows. Each possession is a coloured zone band.</div>
+          <div class="sample-card-tags"><span>5 possessions</span><span>track renewal</span><span>OLE &amp; signalling</span><span>blockade windows</span><span>5 risks</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button onclick="document.getElementById('samplePickerModal').style.display='none'" class="btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PRINT MODAL ── -->
+<div id="printModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:460px">
+    <h3>🖨 Print Views</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Choose which views to print. Each selected view prints on its own page.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <label class="checkbox-pill" style="font-size:14px;gap:8px">
+        <input type="checkbox" id="printProgramme" checked> 📅 Programme (Time-Chainage Chart)
+      </label>
+      <label class="checkbox-pill" style="font-size:14px;gap:8px">
+        <input type="checkbox" id="printResources"> 👷 Resource Histogram
+      </label>
+      <label class="checkbox-pill" style="font-size:14px;gap:8px">
+        <input type="checkbox" id="printCost"> 💰 S-Curve (Cost)
+      </label>
+      <label class="checkbox-pill" style="font-size:14px;gap:8px">
+        <input type="checkbox" id="printCombined"> 📊 Combined (Resources + S-Curve)
+      </label>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="document.getElementById('printModal').style.display='none'" class="btn-secondary">Cancel</button>
+      <button onclick="executePrint()" style="background:#2980b9;color:#fff">🖨 Print Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BULK GROUP MODAL ── -->
+<div id="bulkGroupModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:480px">
+    <h3>📂 Assign Group to Selected Activities</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:6px">
+      <span id="bulkGroupCount"></span> — choose what to do:
+    </p>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <label class="radio-pill"><input type="radio" name="bulkGroupMode" value="add" checked> Add to group</label>
+      <label class="radio-pill"><input type="radio" name="bulkGroupMode" value="replace"> Replace all groups</label>
+      <label class="radio-pill"><input type="radio" name="bulkGroupMode" value="remove"> Remove from group</label>
+    </div>
+    <div id="bulkGroupPicker" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:6px;background:var(--bg-secondary)"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+      <button onclick="document.getElementById('bulkGroupModal').style.display='none'" class="btn-secondary">Cancel</button>
+      <button onclick="confirmBulkGroup()" style="background:#27ae60;color:#fff">✓ Apply to <span id="bulkGroupApplyCount"></span> Activities</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXPORT MODAL ── -->
+<div id="exportModal" class="modal-overlay" style="display:none">
+  <div class="modal-box export-modal-box">
+    <h3>📤 Export Diagram</h3>
+    <div class="export-grid">
+      <div class="export-group-label">Format</div>
+      <div class="export-options">
+        <label class="radio-pill"><input type="radio" name="expFormat" value="png" checked onchange="onExpFormatChange()"> PNG Image</label>
+        <label class="radio-pill"><input type="radio" name="expFormat" value="pdf" onchange="onExpFormatChange()"> PDF Document</label>
+        <label class="radio-pill"><input type="radio" name="expFormat" value="excel" onchange="onExpFormatChange()"> Excel</label>
+        <label class="radio-pill"><input type="radio" name="expFormat" value="tcplan" onchange="onExpFormatChange()"> .tcplan File</label>
+      </div>
+      <div class="export-group-label">Paper Size <span class="export-hint">(PDF)</span></div>
+      <div class="export-options">
+        <label class="radio-pill"><input type="radio" name="expSize" value="a3" checked> A3</label>
+        <label class="radio-pill"><input type="radio" name="expSize" value="a1"> A1</label>
+        <label class="radio-pill"><input type="radio" name="expSize" value="a4"> A4</label>
+      </div>
+      <div class="export-group-label">Orientation <span class="export-hint">(PDF)</span></div>
+      <div class="export-options">
+        <label class="radio-pill"><input type="radio" name="expOrient" value="landscape" checked> Landscape</label>
+        <label class="radio-pill"><input type="radio" name="expOrient" value="portrait"> Portrait</label>
+      </div>
+      <div class="export-group-label">PNG Resolution <span class="export-hint">(PNG)</span></div>
+      <div class="export-options">
+        <label class="radio-pill"><input type="radio" name="expRes" value="1"> 1×</label>
+        <label class="radio-pill"><input type="radio" name="expRes" value="2" checked> 2×</label>
+        <label class="radio-pill"><input type="radio" name="expRes" value="3"> 3×</label>
+      </div>
+      <div class="export-group-label">Content</div>
+      <div class="export-options" style="flex-direction:column;gap:8px">
+        <label class="checkbox-pill"><input type="checkbox" id="expShowTitleBlock" checked> Include title block</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expShowProgress" checked> Show progress</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expShowBaseline" checked> Show baselines</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expShowImage" checked> Include reference image</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expShowLinks" checked> Show dependency links</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expShowPageBreaks"> Page break guides</label>
+      </div>
+      <div class="export-group-label" style="margin-top:14px">Legend <span class="export-hint">(PNG &amp; PDF — appended as separate page/section)</span></div>
+      <div class="export-options" style="flex-direction:column;gap:8px">
+        <label class="checkbox-pill"><input type="checkbox" id="expLegendGroups" checked onchange="updateLegendExportOpts()"> Include legend — Categories &amp; Sub-groups</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expLegendActivities" onchange="updateLegendExportOpts()"> Include legend — All Activities</label>
+        <label class="checkbox-pill"><input type="checkbox" id="expLegendStandalone"> Also download legend as separate PNG file</label>
+      </div>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button onclick="runExport()" class="btn-export-go">Export →</button>
+      <button onclick="openExportPreview()" class="btn-secondary" style="margin-top:0">👁 Preview</button>
+      <button onclick="closeExportModal()" class="btn-secondary" style="margin-top:0">Cancel</button>
+      <span id="exportStatus" style="font-size:13px;color:var(--text-muted)"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXPORT PREVIEW MODAL ── -->
+<div id="exportPreviewModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:min(900px,95vw);max-width:95vw;max-height:90vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="margin:0">👁 Export Preview</h3>
+      <button onclick="closeExportPreview()" class="btn-secondary" style="margin-top:0">✕ Close</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px 0">This is a scaled preview of your export. The actual export will be full resolution.</p>
+    <div style="flex:1;overflow:auto;background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:12px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="previewCanvas" style="max-width:100%;max-height:60vh;border:1px solid var(--border);border-radius:4px;display:block;"></canvas>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px">
+      <button onclick="runExport()" class="btn-export-go">Export →</button>
+      <button onclick="closeExportPreview()" class="btn-secondary" style="margin-top:0">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── COLOUR PALETTE MODAL ── -->
+<div id="paletteModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:340px">
+    <h3>🎨 Colour Palette</h3>
+    <p style="font-size:13px;color:var(--text-muted)">Click to apply. Right-click to delete.</p>
+    <div id="paletteSwatches" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0"></div>
+    <button onclick="addCurrentColourToPalette()">＋ Save Current Colour</button>
+    <button onclick="closePaletteModal()" class="btn-secondary" style="margin-left:8px">Close</button>
+  </div>
+</div>
+
+<!-- ── ACTIVITY LINK DIALOG ── -->
+<div id="linkDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:440px">
+    <h3 id="linkDialogTitle">🔗 Add Dependency Link</h3>
+    <label>From Activity</label>
+    <select id="linkFrom" style="width:100%;margin-top:4px"></select>
+    <label>To Activity</label>
+    <select id="linkTo" style="width:100%;margin-top:4px"></select>
+    <label>Type</label>
+    <select id="linkType" style="width:100%;margin-top:4px">
+      <option value="FS">Finish-to-Start (FS)</option>
+      <option value="SS">Start-to-Start (SS)</option>
+      <option value="FF">Finish-to-Finish (FF)</option>
+      <option value="SF">Start-to-Finish (SF)</option>
+    </select>
+    <label>Lag (days) — positive = delay, negative = overlap</label>
+    <input type="number" id="linkLag" value="0" style="width:100%;margin-top:4px">
+    <div style="margin-top:14px">
+      <button onclick="confirmSaveLink()">Save Link</button>
+      <button onclick="closeLinkDialog()" class="btn-secondary" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ZONE EDIT DIALOG ── -->
+<div id="zoneEditDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:380px">
+    <h3>✏️ Edit Zone</h3>
+    <label>Name</label>
+    <input id="zoneEditName" style="width:100%;margin-top:4px">
+    <label>Start Chainage</label>
+    <input type="number" id="zoneEditStartCh" style="width:100%;margin-top:4px">
+    <label>End Chainage</label>
+    <input type="number" id="zoneEditEndCh" style="width:100%;margin-top:4px">
+    <label>Colour</label>
+    <input type="color" id="zoneEditColor" style="width:60px;height:34px;margin-top:4px;padding:2px">
+    <label>Transparency</label>
+    <input type="range" id="zoneEditAlpha" min="0.05" max="0.4" step="0.05" value="0.12" style="width:180px;margin-top:4px">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+      <input type="checkbox" id="zoneEditHideLabel" style="width:auto;margin:0"> Hide label on chart
+    </label>
+    <div style="margin-top:14px">
+      <button onclick="confirmEditZone()">Save Zone</button>
+      <button onclick="closeZoneEditDialog()" class="btn-secondary" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MARKER EDIT DIALOG ── -->
+<div id="markerEditDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:360px">
+    <h3>✏️ Edit Marker</h3>
+    <label>Name</label>
+    <input id="markerEditName" style="width:100%;margin-top:4px">
+    <label>Date</label>
+    <input type="date" id="markerEditDate" style="width:100%;margin-top:4px">
+    <label>Colour</label>
+    <input type="color" id="markerEditColor" style="width:60px;height:34px;margin-top:4px;padding:2px">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+      <input type="checkbox" id="markerEditHideLabel" style="width:auto;margin:0"> Hide label on chart
+    </label>
+    <div style="margin-top:14px">
+      <button onclick="confirmEditMarker()">Save Marker</button>
+      <button onclick="closeMarkerEditDialog()" class="btn-secondary" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GROUP EDIT DIALOG ── -->
+<div id="groupEditDialog" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="min-width:400px">
+    <h3>✏️ Edit Group</h3>
+    <label>Name</label>
+    <input id="groupEditName" style="width:100%;margin-top:4px">
+    <label style="margin-top:12px">Group Colour <span style="font-size:11px;color:var(--text-muted)">(applied to activities on chart when override is on)</span></label>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+      <input type="color" id="groupEditColor" style="width:50px;height:34px;padding:2px">
+      <label style="display:flex;align-items:center;gap:6px;margin:0;cursor:pointer">
+        <input type="checkbox" id="groupEditUseColor" style="width:auto;margin:0"> Override activity colours on chart
+      </label>
+    </div>
+    <div style="margin-top:14px">
+      <button onclick="confirmEditGroup()">Save</button>
+      <button onclick="closeGroupEditDialog()" class="btn-secondary" style="margin-left:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FULL-SCREEN VIEW ── -->
+<div id="fullscreenOverlay" class="fullscreen-overlay" style="display:none">
+  <div class="fullscreen-header">
+    <span id="fullscreenTitle">Time-Chainage Diagram</span>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:#aaa;font-style:italic">Read-only · Hover for details</span>
+      <!-- View mode buttons in fullscreen -->
+      <div style="display:flex;gap:3px;background:rgba(255,255,255,0.08);border-radius:6px;padding:2px">
+        <button onclick="setFsViewMode('programme')" id="fsBtnProgramme" class="fs-view-btn fs-view-active" style="margin:0;padding:4px 10px;font-size:11px;border:none;border-radius:4px;cursor:pointer;background:var(--tab-active-bg,#2980b9);color:#fff">📅 Programme</button>
+        <button onclick="setFsViewMode('resource')"  id="fsBtnResource"  class="fs-view-btn" style="margin:0;padding:4px 10px;font-size:11px;border:none;border-radius:4px;cursor:pointer;background:transparent;color:#ccc">👷 Resources</button>
+        <button onclick="setFsViewMode('cost')"      id="fsBtnCost"      class="fs-view-btn" style="margin:0;padding:4px 10px;font-size:11px;border:none;border-radius:4px;cursor:pointer;background:transparent;color:#ccc">💰 Cost</button>
+        <button onclick="setFsViewMode('combined')"  id="fsBtnCombined"  class="fs-view-btn" style="margin:0;padding:4px 10px;font-size:11px;border:none;border-radius:4px;cursor:pointer;background:transparent;color:#ccc">📊 Combined</button>
+      </div>
+      <button id="fsCpToggle" onclick="toggleFsCriticalPath()" style="background:#e74c3c;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:12px;cursor:pointer;margin:0">🔴 Critical Path</button>
+      <button onclick="printCurrentView()" style="background:#6c757d;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:12px;cursor:pointer;margin:0">🖨 Print</button>
+      <button onclick="closeFullscreen()" class="fullscreen-close">✕ Close</button>
+    </div>
+  </div>
+  <div class="fullscreen-body" style="position:relative;">
+    <canvas id="fullscreenCanvas"></canvas>
+    <!-- Fullscreen tooltip -->
+    <div id="fsTooltip" class="chart-tooltip" style="position:fixed;display:none;z-index:3000;pointer-events:none;"></div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div class="app-header">
+  <h1>Time-Chainage Planner</h1>
+  <div class="app-header-actions">
+    <span id="currentFileLabel" class="current-file-label">No file open</span>
+
+    <!-- Save / Open from PC -->
+    <button class="btn-save" onclick="openSaveAsDialog()" title="Save diagram as .tcplan file to your computer">💾 Save</button>
+    <label class="btn-file-export" for="openTcplanInput" title="Open a .tcplan file from your computer" style="display:inline-flex;align-items:center;height:32px;padding:0 12px;cursor:pointer;background:#6c757d;color:#fff;border-radius:6px;font-size:13px;white-space:nowrap;border:none;">
+      📂 Open
+    </label>
+    <input type="file" id="openTcplanInput" accept=".tcplan,.json" style="display:none" onchange="openTcplanFromPC(event)">
+
+    <button class="btn-new" onclick="newDiagram()">＋ New</button>
+    <button class="btn-export" onclick="openExportModal()">📤 Export</button>
+    <button class="btn-export" onclick="openPrintModal()" style="background:#6c757d" title="Print one or more views">🖨 Print</button>
+    <button class="btn-export" onclick="openLegendModal()" style="background:#8e44ad" title="View & print legend">🗺 Legend</button>
+
+    <!-- Merge — adds activities from another .tcplan on top of current diagram -->
+    <label class="btn-import" for="importFileInput" title="Merge another .tcplan into the current diagram — adds activities without replacing anything" style="background:#16a085;">⊕ Merge</label>
+    <input type="file" id="importFileInput" accept=".tcplan,.json" style="display:none" onchange="mergeFromFile(event)">
+
+    <button class="btn-undo" onclick="undo()" title="Undo (Ctrl+Z)">↩</button>
+    <button class="btn-undo" onclick="redo()" title="Redo (Ctrl+Y)">↪</button>
+    <button class="btn-fullscreen" onclick="openFullscreen()" title="Full-screen view">⛶</button>
+    <div class="theme-toggle-group">
+      <button class="theme-btn active" id="themeBtn-white" onclick="setTheme('white')" title="White">☀️</button>
+      <button class="theme-btn"        id="themeBtn-grey"  onclick="setTheme('grey')"  title="Grey">🌥️</button>
+      <button class="theme-btn"        id="themeBtn-dark"  onclick="setTheme('dark')"  title="Dark blue">🌙</button>
+      <button class="theme-btn"        id="themeBtn-black" onclick="setTheme('black')" title="Black">⬛</button>
+    </div>
+  </div>
+</div>
+
+<!-- Canvas toolbar -->
+<div class="canvas-toolbar">
+  <div class="canvas-toolbar-left">
+    <span class="toolbar-label">Filter:</span>
+    <input id="actSearchInput" class="search-input" placeholder="🔍 Search activities…" oninput="onSearchChange(this.value)">
+    <button class="btn-sm" onclick="clearSearch()" title="Clear search">✕</button>
+    <span class="toolbar-sep"></span>
+    <span class="toolbar-label">View:</span>
+    <button class="btn-sm view-btn active" id="viewBtn-all"   onclick="setViewFilter('all')">All</button>
+    <button class="btn-sm view-btn"        id="viewBtn-1m"    onclick="setViewFilter('1m')">1M</button>
+    <button class="btn-sm view-btn"        id="viewBtn-3m"    onclick="setViewFilter('3m')">3M</button>
+    <button class="btn-sm view-btn"        id="viewBtn-6m"    onclick="setViewFilter('6m')">6M</button>
+    <button class="btn-sm view-btn"        id="viewBtn-1y"    onclick="setViewFilter('1y')">1Y</button>
+    <span class="toolbar-sep"></span>
+    <span id="selectionInfo" class="selection-info" style="display:none"></span>
+    <button id="btnBulkDelete"  class="btn-sm btn-danger-sm" onclick="bulkDelete()"  style="display:none">Delete Selected</button>
+    <button id="btnBulkGroup"   class="btn-sm"               onclick="openBulkGroupModal()"   style="display:none">📂 Set Group</button>
+    <button id="btnBulkColour"  class="btn-sm"               onclick="bulkColour()"  style="display:none">Set Colour</button>
+    <button id="btnDeselectAll" class="btn-sm"               onclick="deselectAll()" style="display:none">Deselect</button>
+  </div>
+
+  <!-- Chart view — centred -->
+  <div class="canvas-toolbar-centre">
+    <button class="btn-sm view-btn active" id="viewBtn-programme" onclick="setChartViewMode('programme')" title="Programme view">📅 Programme</button>
+    <button class="btn-sm view-btn"        id="viewBtn-resource"  onclick="setChartViewMode('resource')"  title="Resource histogram">👷 Resources</button>
+    <button class="btn-sm view-btn"        id="viewBtn-cost"      onclick="setChartViewMode('cost')"      title="S-curve cost view">💰 Cost</button>
+    <button class="btn-sm view-btn"        id="viewBtn-combined"  onclick="setChartViewMode('combined')"  title="Resources + S-Curve combined">📊 Combined</button>
+  </div>
+
+  <div class="canvas-toolbar-right">
+    <label class="checkbox-pill small"><input type="checkbox" id="snapToggle" checked> Snap</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showDataDateToggle" checked onchange="drawChart()"> Data Date</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showPageBreaksToggle" onchange="drawChart()"> Page guides</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showCriticalToggle" onchange="drawChart()"> Critical Path</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showLinksToggle" checked onchange="drawChart()"> Show Links</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showDateMarkersToggle" checked onchange="drawChart()" title="Show/hide date marker lines"> Date Markers</label>
+    <label class="checkbox-pill small"><input type="checkbox" id="showRiskOverlaysToggle" checked onchange="drawChart()" title="Show/hide risk dots, P50/P80/P90 lines and Project Completion line"> Risk Overlays</label>
+    <button class="btn-sm btn-schedule" onclick="scheduleDiagram()" title="Auto-schedule based on dependencies">⚡ Schedule</button>
+  </div>
+</div>
+
+<!-- Fix 5: Grouped tabs with visual separators -->
+<div class="tabs">
+  <!-- Setup -->
+  <div class="tab active" onclick="openTab('settings')">⚙️ Settings</div>
+  <div class="tab" onclick="openTab('titleblock')">📋 Title Block</div>
+  <div class="tab-sep"></div>
+  <!-- Programme Setup — zones and markers first -->
+  <div class="tab" onclick="openTab('markers')">📅 Date Markers</div>
+  <div class="tab" onclick="openTab('zones')">🏗 Zones</div>
+  <div class="tab-sep"></div>
+  <!-- Build -->
+  <div class="tab" onclick="openTab('editor')">✏️ Activities</div>
+  <div class="tab" onclick="openTab('list')">📄 Activity List</div>
+  <div class="tab" onclick="openTab('groups')">📂 Grouping</div>
+  <div class="tab-sep"></div>
+  <!-- Dependencies -->
+  <div class="tab" onclick="openTab('relationships')">🔗 Relationships</div>
+  <div class="tab" onclick="openTab('links')">📊 Dep. List</div>
+  <div class="tab-sep"></div>
+  <!-- Analyse -->
+  <div class="tab" onclick="openTab('criticalpath')">🔴 Critical Path</div>
+  <div class="tab" onclick="openTab('baselines')">📌 Baselines</div>
+  <div class="tab" onclick="openTab('revisions')">📋 Revisions</div>
+  <div class="tab" onclick="openTab('resources')">💰 Resources</div>
+  <div class="tab" onclick="openTab('risks')">⚠️ Risk Register</div>
+  <div class="tab-sep"></div>
+  <!-- Sync -->
+  <div class="tab" onclick="openTab('sync')">🔄 Sync</div>
+  <div class="tab-sep"></div>
+  <!-- Dashboard -->
+  <div class="tab" onclick="openTab('dashboard')">📊 Dashboard</div>
+</div>
+
+<!-- PROJECT SETTINGS -->
+<div id="settings" class="section active">
+
+  <!-- Getting Started banner — always visible in Settings -->
+  <div class="getting-started-bar">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:20px">👋</span>
+      <div>
+        <strong style="font-size:14px">New here?</strong>
+        <span style="font-size:13px;color:var(--text-muted);margin-left:8px">Set your timeline and chainage below, then go to ✏️ Activities to start adding your programme.</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="openSamplePicker()" style="margin:0;padding:6px 14px;font-size:13px;background:#27ae60;color:#fff;border:none;border-radius:6px;cursor:pointer" title="Choose from multiple sample projects">▶ Load Sample Project</button>
+      <button onclick="document.getElementById('onboardingModal').style.display='flex'" style="margin:0;padding:6px 14px;font-size:13px;background:var(--tab-active-bg);color:#fff;border:none;border-radius:6px;cursor:pointer" title="Show the welcome guide">📖 Guide</button>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <div>
+      <label>Timeline Start</label><input type="date" id="timelineStart">
+      <label>Timeline End</label><input type="date" id="timelineEnd">
+      <label>Minimum Chainage</label><input type="number" id="minChainage" value="0">
+      <label>Maximum Chainage</label><input type="number" id="maxChainage" value="1000">
+      <label>Chainage Spacing</label><input type="number" id="chainSpacing" value="50">
+      <button onclick="applySettings()" style="margin-top:12px">Apply Settings</button>
+    </div>
+    <div>
+      <label>Data Date</label>
+      <input type="date" id="settingsDataDate" onchange="syncDataDateFromSettings()">
+      <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0 0">Reporting cut-off date — drawn as a red dashed line on the chart when "Data Date" is toggled on.</p>
+
+      <label style="margin-top:14px">Currency</label>
+      <div style="position:relative;margin-top:4px;width:240px">
+        <input id="settingsCurrencySearch" type="text" placeholder="🔍 Type to search (e.g. dollar, riyal, peso)…"
+               style="width:100%;padding:6px 8px;font-size:13px;box-sizing:border-box"
+               oninput="filterCurrencyList(this.value)"
+               onfocus="document.getElementById('currencyDropdown').style.display='block'"
+               autocomplete="off">
+        <div id="currencyDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg-section);border:1px solid var(--border);border-radius:0 0 6px 6px;max-height:220px;overflow-y:auto;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15)"></div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0 0">Used for the 💰 Cost/Day field and cost chart view.</p>
+      <div class="img-strip-box" style="margin-top:16px">
+        <h4>Chainage Reference Image</h4>
+        <p>Upload a site map or elevation. Drag the bottom edge to resize.</p>
+        <div class="img-strip-controls">
+          <label class="img-upload-label" for="chainageImageInput">📂 Choose Image</label>
+          <input type="file" id="chainageImageInput" accept="image/*" onchange="loadChainageImage(event)">
+          <span id="chainageImageName" class="img-filename">No image loaded</span>
+        </div>
+        <div id="imgHeightRow" style="display:none">
+          <label style="margin-top:12px">Height: <span id="imgHeightVal">120</span>px</label>
+          <input type="range" id="imgHeightSlider" min="40" max="400" value="120" oninput="onImgHeightSlider(this.value)">
+          <button class="btn-remove-img" onclick="removeChainageImage()">🗑 Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TITLE BLOCK -->
+<div id="titleblock" class="section">
+  <h3>Title Block</h3>
+  <div class="titleblock-grid">
+    <div>
+      <label>Project Name</label><input id="tbProjectName" placeholder="e.g. M1 Junction 15 Upgrade">
+      <label>Drawing Title</label><input id="tbDrawingTitle" placeholder="e.g. Time-Chainage Programme">
+      <label>Drawing Number</label><input id="tbDrawingNumber" placeholder="e.g. TC-001">
+      <label>Revision</label><input id="tbRevision" placeholder="e.g. P01">
+      <label>Scale</label><input id="tbScale" placeholder="e.g. NTS">
+    </div>
+    <div>
+      <label>Drawn By</label><input id="tbDrawnBy" placeholder="e.g. J. Smith">
+      <label>Checked By</label><input id="tbCheckedBy" placeholder="e.g. A. Jones">
+      <label>Date</label><input type="date" id="tbDate">
+      <label>Data Date <span style="font-size:11px;color:var(--text-muted)">(synced from Project Settings)</span></label>
+      <input type="date" id="tbDataDate" readonly style="background:var(--bg-secondary);cursor:not-allowed">
+      <label>Company Logo</label>
+      <div class="img-strip-controls" style="margin-top:6px">
+        <label class="img-upload-label" for="tbLogoInput">📂 Choose Logo</label>
+        <input type="file" id="tbLogoInput" accept="image/*" onchange="loadTbLogo(event)" style="display:none">
+        <span id="tbLogoName" class="img-filename">No logo loaded</span>
+        <button id="tbLogoRemove" onclick="removeTbLogo()" style="display:none;margin-top:0;margin-left:6px;background:#e74c3c;color:#fff">✕</button>
+      </div>
+      <div id="tbLogoPreview" style="display:none;margin-top:10px">
+        <img id="tbLogoImg" style="max-height:60px;max-width:200px;border:1px solid var(--border);border-radius:4px;padding:4px;background:white">
+      </div>
+    </div>
+  </div>
+  <button onclick="saveTitleBlock()" style="margin-top:14px">💾 Save Title Block</button>
+  <span id="tbSaveMsg" style="margin-left:12px;font-size:13px;color:#27ae60"></span>
+</div>
+
+<!-- ACTIVITY EDITOR -->
+<div id="editor" class="section">
+
+  <!-- Mode toggle -->
+  <div class="editor-mode-toggle">
+    <button id="editorToggleForm" class="editor-mode-btn active" onclick="toggleEditorMode('form')" title="Form editor">
+      📝 Form
+    </button>
+    <button id="editorToggleSS" class="editor-mode-btn" onclick="toggleEditorMode('grid')" title="Spreadsheet editor">
+      📊 Grid
+    </button>
+  </div>
+
+  <!-- FORM MODE -->
+  <div id="editorFormMode" autocomplete="off">
+  <div class="editor-grid">
+    <div class="editor-col">
+      <label>P6 Activity ID</label>
+      <input type="text" id="actP6" autocomplete="off">
+      <label>Name</label>
+      <input type="text" id="actName" autocomplete="off">
+      <label>Start Date</label>
+      <input type="date" id="actStart">
+      <label>End Date</label>
+      <input type="date" id="actEnd">
+
+      <!-- Group Picker — improved collapsible accordion -->
+      <label style="margin-top:10px">Groups <span style="font-size:11px;color:var(--text-muted)">(click to assign)</span></label>
+      <div id="groupPickerContainer" class="group-picker-container"></div>
+    </div>
+    <div class="editor-col">
+      <label>Start Chainage</label>
+      <input type="number" id="actStartCh">
+      <label>End Chainage</label>
+      <input type="number" id="actEndCh">
+      <label style="margin-top:10px">👷 Workers/day</label>
+      <input type="number" id="actResourceCount" min="0" step="1" value="0" style="width:140px;margin-top:4px" placeholder="e.g. 12">
+      <p style="font-size:11px;color:var(--text-muted);margin:2px 0 6px 0">Number of workers on this activity</p>
+
+      <label id="actUnitCostLabel">💼 Labour rate/day</label>
+      <input type="number" id="actUnitCost" min="0" step="50" value="0" style="width:140px;margin-top:4px" placeholder="e.g. 350">
+      <p style="font-size:11px;color:var(--text-muted);margin:2px 0 6px 0">Cost per worker per day. Total = rate × workers × duration</p>
+
+      <label style="margin-top:2px">🚜 Equipment hire/day</label>
+      <input type="number" id="actEquipmentCost" min="0" step="100" value="0" style="width:140px;margin-top:4px" placeholder="e.g. 1200">
+      <p style="font-size:11px;color:var(--text-muted);margin:2px 0 6px 0">Daily plant/equipment hire. Total = rate × duration</p>
+
+      <label style="margin-top:2px">🧱 Material cost (total)</label>
+      <input type="number" id="actMaterialCost" min="0" step="100" value="0" style="width:140px;margin-top:4px" placeholder="e.g. 50000">
+      <p style="font-size:11px;color:var(--text-muted);margin:2px 0 0 0">Fixed one-off material purchase. Does NOT multiply by duration</p>
+      <label>Shape</label>
+      <select id="actShape">
+        <option value="rect">Rectangle</option>
+        <option value="circle">Circle</option>
+        <option value="diamond">Diamond</option>
+        <option value="triangle">Triangle</option>
+        <option value="star">Star ★</option>
+        <option value="flag">Flag 🚩</option>
+        <option value="line">Line</option>
+      </select>
+      <label>Show Label</label>
+      <select id="actLabel">
+        <option value="no">No</option>
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </select>
+      <label>Progress %</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <input type="range" id="actProgress" min="0" max="100" step="5" value="0"
+               oninput="document.getElementById('progressVal').value=this.value" style="width:130px;margin:0">
+        <input type="number" id="progressVal" min="0" max="100" step="1" value="0"
+               style="width:52px;margin:0;padding:3px 5px;font-size:13px"
+               oninput="document.getElementById('actProgress').value=Math.min(100,Math.max(0,this.value))">
+        <span style="font-size:12px;color:var(--text-muted)">%</span>
+      </div>
+    </div>
+    <div class="editor-col">
+      <label>Colour</label>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+        <input type="color" id="actColor">
+        <button onclick="openPaletteModal()" style="margin-top:0;padding:4px 10px;font-size:12px">🎨 Palette</button>
+      </div>
+      <label>Transparency</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <input type="range" id="actAlpha" min="0.1" max="1" step="0.05" value="1"
+               oninput="document.getElementById('actAlphaVal').value=Math.round(this.value*100)"
+               style="width:130px;margin:0">
+        <input type="number" id="actAlphaVal" min="10" max="100" step="5" value="100"
+               style="width:52px;margin:0;padding:3px 5px;font-size:13px"
+               oninput="document.getElementById('actAlpha').value=Math.min(1,Math.max(0.1,this.value/100))">
+        <span style="font-size:12px;color:var(--text-muted)">%</span>
+      </div>
+      <label style="margin-top:12px">Outline</label>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">
+        <select id="actOutlineStyle" style="width:110px;margin-top:0;font-size:12px">
+          <option value="none">None</option>
+          <option value="solid">Solid</option>
+          <option value="dashed">Dashed</option>
+          <option value="dotted">Dotted</option>
+          <option value="dash-dot">Dash-dot</option>
+        </select>
+        <input type="color" id="actOutlineColor" value="#000000" style="width:36px;height:28px;padding:2px;margin-top:0" title="Outline colour">
+      </div>
+      <label style="margin-top:6px">Outline Width</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <input type="range" id="actOutlineWidth" min="0.5" max="6" step="0.5" value="1.5"
+               oninput="document.getElementById('outlineWidthVal').value=this.value"
+               style="width:130px;margin:0">
+        <input type="number" id="outlineWidthVal" min="0.5" max="6" step="0.5" value="1.5"
+               style="width:52px;margin:0;padding:3px 5px;font-size:13px"
+               oninput="document.getElementById('actOutlineWidth').value=Math.min(6,Math.max(0.5,this.value))">
+        <span style="font-size:12px;color:var(--text-muted)">px</span>
+      </div>
+      <label>Notes</label>
+      <textarea id="actNotes" rows="4" autocomplete="off" style="width:200px;padding:4px;margin-top:4px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-border);border-radius:4px;font-family:Arial;font-size:13px;resize:vertical"></textarea>
+    </div>
+  </div>
+  <!-- hidden multi-select kept for compatibility -->
+  <select id="actGroup" multiple size="5" style="display:none"></select>
+  <div class="editor-actions">
+    <button onclick="saveActivity()">Save Activity</button>
+    <button onclick="deleteActivity()">Delete Activity</button>
+    <button onclick="openLinkDialog()" style="background:#8e44ad">🔗 Add Dependency</button>
+  </div>
+  </div><!-- end editorFormMode -->
+
+  <!-- GRID MODE — Handsontable -->
+  <div id="editorSSMode" style="display:none">
+    <div class="hot-toolbar">
+      <span style="font-size:12px;color:var(--text-muted)">
+        Paste from Excel with <kbd>Ctrl+V</kbd> · Drag fill-handle to copy down · <strong>Right-click</strong> column to sort, filter or hide · Hover column header for help
+      </span>
+      <button onclick="hotAddRows(5)" class="btn-sm" style="margin:0">＋ 5 Rows</button>
+      <button onclick="hotClearEmptyRows()" class="btn-sm" style="background:#e67e22;color:#fff;border:none;margin:0">🧹 Clear Empty Rows</button>
+      <button onclick="hotClearFilters()" class="btn-sm" style="margin:0" title="Reset all column filters and sort">↺ Reset Filters</button>
+    </div>
+    <div id="hotContainer" class="hot-container"></div>
+  </div>
+
+</div><!-- end editor section -->
+
+<!-- ACTIVITY LIST -->
+<div id="list" class="section">
+  <h3>Activities</h3>
+  <div id="activityTableContainer"><p>No activities added yet.</p></div>
+</div>
+
+<!-- GROUPING — improved with collapse, drag-order, edit, colour override, chart filter checkboxes -->
+<div id="groups" class="section">
+  <h3>Grouping</h3>
+  <div class="group-controls">
+    <div class="group-add-box">
+      <h4>Add Category</h4>
+      <input id="categoryName" placeholder="e.g. Track Drainage">
+      <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
+        <input type="color" id="categoryColor" value="#3498db" style="width:40px;height:28px;padding:2px;margin-top:0" title="Category colour">
+        <button onclick="createCategory()" style="margin-top:0">＋ Add Category</button>
+      </div>
+    </div>
+    <div class="group-add-box">
+      <h4>Add Sub-Group</h4>
+      <input id="subgroupName" placeholder="e.g. Gang 1">
+      <label style="margin-top:6px">Under Category</label>
+      <select id="subgroupParent" style="width:200px;margin-top:4px"></select>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
+        <input type="color" id="subgroupColor" value="#e74c3c" style="width:40px;height:28px;padding:2px;margin-top:0" title="Sub-group colour">
+        <button onclick="createSubgroup()" style="margin-top:0">＋ Add Sub-Group</button>
+      </div>
+    </div>
+    <div class="group-add-box" style="min-width:200px">
+      <h4>Visibility &amp; Legend</h4>
+      <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px 0">
+        Use the <strong>☑ checkboxes</strong> to show or hide groups on the chart.<br>
+        <span style="color:#f39c12;font-weight:bold">★</span> = colour override on — activities drawn in group colour.<br>
+        Drag <strong>⠿</strong> to reorder. Drop a sub-group onto a category to move it.
+      </p>
+      <div style="display:flex;gap:6px">
+        <button class="btn-sm" onclick="checkAllGroups()" style="margin-top:0">☑ Show All</button>
+        <button class="btn-sm" onclick="uncheckAllGroups()" style="margin-top:0">☐ Hide All</button>
+      </div>
+    </div>
+  </div>
+  <div id="groupTree" style="margin-top:16px"></div>
+</div>
+
+<!-- DATE MARKERS -->
+<div id="markers" class="section">
+  <h3>📅 Date Markers</h3>
+  <div class="marker-add-row">
+    <input id="markerName" placeholder="e.g. Contract Award">
+    <input type="date" id="markerDate">
+    <input type="color" id="markerColor" value="#e74c3c" style="width:50px;height:32px;padding:2px;margin-top:0">
+    <button onclick="addMarker()" style="margin-top:0">＋ Add</button>
+  </div>
+  <div id="markerList" style="margin-top:12px"></div>
+</div>
+
+<!-- CHAINAGE ZONES -->
+<div id="zones" class="section">
+  <h3>🏗 Chainage Zones</h3>
+  <div class="zone-add-row">
+    <input id="zoneName" placeholder="Zone name">
+    <input type="number" id="zoneStartCh" placeholder="Start Ch">
+    <input type="number" id="zoneEndCh" placeholder="End Ch">
+    <input type="color" id="zoneColor" value="#3498db" style="width:50px;height:32px;padding:2px;margin-top:0" title="Zone colour">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:0">
+      <span style="font-size:10px;color:var(--text-muted);white-space:nowrap">Transparency</span>
+      <input type="range" id="zoneAlpha" min="0.05" max="0.4" step="0.05" value="0.12"
+             style="width:80px;margin:0"
+             title="Transparency — how see-through the zone colour is on the chart"
+             oninput="document.getElementById('zoneAlphaVal').textContent=Math.round(this.value*100)+'%'">
+      <span id="zoneAlphaVal" style="font-size:10px;color:var(--text-muted)">12%</span>
+    </div>
+    <button onclick="addZone()" style="margin-top:0">＋ Add</button>
+  </div>
+  <div id="zoneList" style="margin-top:12px"></div>
+</div>
+
+<!-- DEPENDENCIES — raw list view -->
+<div id="links" class="section">
+  <h3>🔗 Activity Dependencies</h3>
+  <p style="font-size:13px;color:var(--text-muted);margin:0 0 10px 0">Full list of all dependency links. For a more intuitive view, use the <strong>Relationships</strong> tab.</p>
+  <button onclick="openLinkDialog()">＋ Add Dependency</button>
+  <div id="linkList" style="margin-top:12px"></div>
+</div>
+
+<!-- RELATIONSHIPS — P6-style predecessors / successors panel -->
+<div id="relationships" class="section">
+  <h3>🔗 Relationships</h3>
+  <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px 0">
+    Search for an activity below. Once selected, you'll see its <strong>Predecessors</strong> and <strong>Successors</strong> side by side — add, edit or remove relationships directly.
+  </p>
+  <div id="relationshipsPanel"></div>
+</div>
+
+<!-- CRITICAL PATH — completely redesigned -->
+<div id="criticalpath" class="section">
+  <h3>🔴 Critical Path Analysis</h3>
+  <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">
+    Select one or more <strong>target activities</strong> below — each gets its own colour-coded path traced backwards through your dependencies. Hold <kbd style="background:var(--code-bg);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:11px">Ctrl</kbd> to select multiple targets at once.
+  </p>
+  <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+    <div style="flex:1;min-width:280px;max-width:440px">
+      <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:4px">🔍 Filter activities</label>
+      <input type="text" id="cpSearchInput" placeholder="Type name or P6 ID to filter the list…"
+        oninput="filterCpTargetSelect(this.value)"
+        style="width:100%;padding:7px 10px;font-size:13px;border-radius:5px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text);margin-top:0;margin-bottom:6px">
+      <label style="display:block;font-size:13px;font-weight:bold;margin-bottom:4px">Select target activities <span style="font-weight:normal;color:var(--text-muted)">(Ctrl+click for multiple)</span></label>
+      <select id="cpTargetSelect" multiple
+        style="width:100%;padding:4px;font-size:13px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-border);border-radius:5px;height:180px">
+      </select>
+    </div>
+    <div style="padding-top:52px;display:flex;flex-direction:column;gap:8px">
+      <button onclick="computeAndShowCriticalPath()" style="background:#e74c3c;color:#fff;margin-top:0;white-space:nowrap">🔴 Analyse Selected</button>
+      <button onclick="clearCriticalPathAnalysis()" class="btn-secondary" style="margin-top:0">✕ Clear All Paths</button>
+    </div>
+  </div>
+  <div id="cpResults"></div>
+</div>
+
+<!-- BASELINES -->
+<div id="baselines" class="section">
+  <h3>📌 Baseline Manager</h3>
+  <div class="baseline-save-row">
+    <input id="baselineName" placeholder="e.g. Baseline Rev 1" style="width:320px">
+    <button onclick="addBaseline()">📌 Save Baseline</button>
+  </div>
+  <div id="baselineListContainer" style="margin-top:16px"></div>
+</div>
+
+<!-- REVISIONS -->
+<div id="revisions" class="section">
+  <h3>📋 Revision Control</h3>
+  <div class="revision-save-row">
+    <input id="revisionName" placeholder="e.g. Rev P01" style="width:280px">
+    <button onclick="saveRevision()">💾 Save Revision</button>
+  </div>
+  <div id="revisionListInline" style="margin-top:16px"></div>
+</div>
+
+<!-- RESOURCES & COST -->
+<div id="resources" class="section">
+  <h3>👷 Resources &amp; Cost</h3>
+  <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px 0">
+    Add a daily resource count and unit cost to each activity in the <strong>Activity Editor</strong> or <strong>Grid</strong>. The planner calculates totals automatically from duration and displays them in the <strong>Resources</strong> and <strong>Cost</strong> chart views (buttons in the toolbar above the chart).
+  </p>
+
+  <!-- Summary cards -->
+  <div id="resourceSummaryCards" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px"></div>
+
+  <!-- Activity resource table -->
+  <h4 style="margin:0 0 8px 0">Activity Breakdown</h4>
+  <div id="resourceTableContainer"><p style="color:var(--text-muted);font-size:13px">No resource data yet. Add Resources/day and Cost/day to activities in the Activity Editor.</p></div>
+</div>
+
+<!-- PROGRAMME SYNC -->
+<!-- PROGRAMME SYNC — redesigned for clarity -->
+<!-- ══════════════════════════════════════════════════════════════
+     RISK REGISTER
+     ══════════════════════════════════════════════════════════════ -->
+<div id="risks" class="section">
+  <h3 style="margin:0 0 14px 0">⚠️ Risk Register</h3>
+
+  <!-- Add / Edit form -->
+  <div class="risk-form-box" id="riskFormBox">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 18px">
+      <div>
+        <label>Risk Title</label>
+        <input type="text" id="riskTitle" placeholder="e.g. Ground conditions worse than expected" autocomplete="off" style="width:100%">
+      </div>
+      <div>
+        <label>Linked Activity</label>
+        <select id="riskActivity" style="width:100%">
+          <option value="">— None (programme-level risk) —</option>
+        </select>
+      </div>
+      <div>
+        <label>Likelihood</label>
+        <select id="riskLikelihood" style="width:100%">
+          <option value="1">1 — Very Low</option>
+          <option value="2">2 — Low</option>
+          <option value="3" selected>3 — Medium</option>
+          <option value="4">4 — High</option>
+          <option value="5">5 — Very High</option>
+        </select>
+      </div>
+      <div>
+        <label>Impact on Programme</label>
+        <select id="riskImpact" style="width:100%">
+          <option value="1">1 — Negligible</option>
+          <option value="2">2 — Minor</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — Major</option>
+          <option value="5">5 — Critical</option>
+        </select>
+      </div>
+      <div>
+        <label>Time Impact (days)</label>
+        <input type="number" id="riskTimeDays" value="0" min="0" style="width:100%">
+      </div>
+      <div>
+        <label>Cost Impact (<span id="riskCurrSymbol">£</span>)</label>
+        <input type="number" id="riskCost" value="0" min="0" style="width:100%">
+      </div>
+      <div>
+        <label>Risk Owner</label>
+        <input type="text" id="riskOwner" placeholder="e.g. Site Manager" autocomplete="off" style="width:100%">
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="riskStatus" style="width:100%">
+          <option value="Open">Open</option>
+          <option value="Mitigated">Mitigated</option>
+          <option value="Closed">Closed</option>
+          <option value="Transferred">Transferred</option>
+        </select>
+      </div>
+      <div>
+        <label>Mitigation Due Date</label>
+        <input type="date" id="riskDueDate" style="width:100%">
+      </div>
+      <div>
+        <label>Mitigation Progress <span id="riskProgressVal" style="color:var(--tab-active-bg);font-weight:700">0%</span></label>
+        <input type="range" id="riskMitigationProgress" min="0" max="100" value="0"
+          oninput="document.getElementById('riskProgressVal').textContent=this.value+'%'"
+          style="width:100%;margin-top:6px">
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Mitigation Action</label>
+        <textarea id="riskMitigation" rows="2" autocomplete="off" style="width:100%;resize:vertical" placeholder="What action reduces this risk?"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button onclick="saveRisk()" style="background:#e74c3c;color:#fff">＋ Add Risk</button>
+      <button onclick="clearRiskForm()" class="btn-secondary" style="margin:0">Clear</button>
+    </div>
+    <input type="hidden" id="riskEditId">
+  </div>
+
+  <!-- Filters -->
+  <div style="display:flex;gap:10px;align-items:center;margin:14px 0 8px;flex-wrap:wrap">
+    <label style="font-size:12px;font-weight:600;color:var(--text-muted)">Filter:</label>
+    <select id="riskFilterStatus" onchange="renderRiskTable()" style="font-size:12px;padding:3px 6px">
+      <option value="">All Statuses</option>
+      <option value="Open">Open</option>
+      <option value="Mitigated">Mitigated</option>
+      <option value="Closed">Closed</option>
+      <option value="Transferred">Transferred</option>
+    </select>
+    <select id="riskFilterLikelihood" onchange="renderRiskTable()" style="font-size:12px;padding:3px 6px">
+      <option value="">All Likelihoods</option>
+      <option value="4">High (4+)</option>
+      <option value="3">Medium (3+)</option>
+    </select>
+    <span id="riskCount" style="font-size:12px;color:var(--text-muted);margin-left:auto"></span>
+  </div>
+
+  <!-- Risk-adjusted completion + float alert banner -->
+  <div id="riskInsightBar" style="display:none;margin-bottom:14px"></div>
+
+  <!-- Risk matrix mini-view -->
+  <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Risk Heat Map</div>
+      <canvas id="riskMatrix" width="200" height="200" style="border:1px solid var(--border);border-radius:6px"></canvas>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Exposure Summary</div>
+      <div id="riskSummaryCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Risk-Adjusted Completion</div>
+      <div id="riskAdjustedCompletion" style="background:var(--bg-section);border:1px solid var(--border);border-radius:6px;padding:10px"></div>
+    </div>
+  </div>
+
+  <!-- Float vs Risk alerts -->
+  <div id="floatRiskAlerts" style="margin-bottom:14px"></div>
+
+  <!-- Risk table -->
+  <div id="riskTableContainer" style="overflow-x:auto"></div>
+</div>
+
+<div id="sync" class="section">
+  <h3>Programme Sync &amp; Import</h3>
+  <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px 0">There are two separate tools here. Read the cards below to pick the right one for what you're trying to do.</p>
+
+  <!-- Decision cards -->
+  <div class="sync-choice-row">
+
+    <!-- Card A: Excel bulk create -->
+    <div class="sync-card sync-card--excel">
+      <div class="sync-card-icon">📊</div>
+      <div class="sync-card-body">
+        <h4>Starting from scratch?<br><span>Bulk create activities from Excel</span></h4>
+        <p>Use this when you're <strong>building your diagram for the first time</strong> and want to load a list of activities in one go. It creates brand-new activities on your chart — including chainages, colours, shapes and progress.</p>
+        <div class="sync-card-badge sync-card-badge--creates">✚ Creates new activities</div>
+      </div>
+    </div>
+
+    <!-- Card B: P6 CSV date sync -->
+    <div class="sync-card sync-card--p6">
+      <div class="sync-card-icon">🔄</div>
+      <div class="sync-card-body">
+        <h4>Already have activities on the chart?<br><span>Sync updated dates from P6</span></h4>
+        <p>Use this when your diagram already exists and you've received an <strong>updated programme from Primavera P6</strong>. It matches activities by their P6 ID and updates their start/finish dates only — nothing else changes.</p>
+        <div class="sync-card-badge sync-card-badge--updates">↺ Updates dates only · will not create or delete activities</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── TOOL A: Bulk create from Excel ── -->
+  <div class="sync-tool-block">
+    <div class="sync-tool-header sync-tool-header--excel">
+      <span class="sync-tool-number">A</span>
+      <div>
+        <strong>Bulk Create Activities from Excel</strong>
+        <span class="sync-tool-subtitle">Creates new activities from an .xlsx spreadsheet</span>
+      </div>
+      <button onclick="downloadExcelTemplate()" class="btn-template" title="Download a ready-made Excel template with the correct column headings">⬇ Download Template</button>
+    </div>
+
+    <div class="sync-tool-body">
+      <div class="sync-columns-grid">
+        <div>
+          <p class="sync-col-heading">Required columns</p>
+          <table class="formatTable">
+            <thead><tr><th>What it is</th><th>Column name(s) accepted</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Activity name</td><td>Name · Activity Name · Description</td><td>Drainage Run A</td></tr>
+              <tr><td>Start date</td><td>Start · Start Date · Planned Start · Early Start</td><td>01/03/2026</td></tr>
+              <tr><td>End date</td><td>End · Finish · End Date · Planned Finish · Early Finish</td><td>30/06/2026</td></tr>
+              <tr><td>Start chainage</td><td>StartCh · Start Chainage · ChStart</td><td>100</td></tr>
+              <tr><td>End chainage</td><td>EndCh · End Chainage · ChEnd</td><td>450</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <p class="sync-col-heading">Optional columns <span style="font-weight:normal;color:var(--text-muted)">(leave blank to use defaults)</span></p>
+          <table class="formatTable">
+            <thead><tr><th>What it is</th><th>Column name(s) accepted</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>P6 Activity ID</td><td>P6ID · Activity ID · ID · Task ID</td><td>A1050</td></tr>
+              <tr><td>Colour</td><td>Colour · Color</td><td>#e74c3c</td></tr>
+              <tr><td>Shape</td><td>Shape</td><td>rect · line · circle · diamond · triangle · star · flag</td></tr>
+              <tr><td>Transparency</td><td>Alpha · Transparency · Opacity</td><td>0.8 or 80 (for 80%)</td></tr>
+              <tr><td>Label position</td><td>Label · LabelPosition · ShowLabel</td><td>no · left · center · right</td></tr>
+              <tr><td>Notes</td><td>Notes · Comments</td><td>Hold for design approval</td></tr>
+              <tr><td colspan="3" style="background:var(--bg-secondary);font-weight:bold;font-size:11px;color:var(--text-muted);padding:5px 8px">RESOURCE &amp; COST</td></tr>
+              <tr><td>Workers/day</td><td>Workers · ResourceCount · Resources · WorkersDay</td><td>12</td></tr>
+              <tr><td>Labour rate/day</td><td>LabourRate · UnitCost · LabourDay · RatePerWorker · LabourPerDay</td><td>350</td></tr>
+              <tr><td>Equipment hire/day</td><td>EquipmentDay · EquipDay · EquipmentHire · EquipmentPerDay</td><td>1200</td></tr>
+              <tr><td>Material cost (fixed total)</td><td>MaterialTotal · MaterialCost · Materials · Material</td><td>50000</td></tr>
+              <tr><td colspan="3" style="background:var(--bg-secondary);font-weight:bold;font-size:11px;color:var(--text-muted);padding:5px 8px">OUTLINE / APPEARANCE</td></tr>
+              <tr><td>Outline style</td><td>OutlineStyle · Outline</td><td>none · solid · dashed · dotted · dash-dot</td></tr>
+              <tr><td>Outline colour</td><td>OutlineColour · OutlineColor</td><td>#000000</td></tr>
+              <tr><td>Outline width (px)</td><td>OutlineWidth · OutlineThickness</td><td>1.5</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px"><strong>Date formats:</strong> DD/MM/YYYY &nbsp;·&nbsp; YYYY-MM-DD &nbsp;·&nbsp; DD-Mon-YYYY &nbsp;·&nbsp; DD/MM/YY</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">💡 <strong>Tip:</strong> Download the template below — it already has all these column headers ready to fill in.</p>
+        </div>
+      </div>
+
+      <div class="sync-action-row">
+        <input type="file" id="xlsxFile" accept=".xlsx,.xls">
+        <button onclick="importExcel()" class="btn-sync-go btn-sync-go--excel">📊 Import from Excel</button>
+      </div>
+      <div id="xlsxDebug"></div>
+    </div>
+  </div>
+
+  <!-- ── TOOL B: Sync dates from P6 ── -->
+  <div class="sync-tool-block">
+    <div class="sync-tool-header sync-tool-header--p6">
+      <span class="sync-tool-number sync-tool-number--p6">B</span>
+      <div>
+        <strong>Sync Dates from P6</strong>
+        <span class="sync-tool-subtitle">Updates start &amp; finish dates on existing activities — matched by P6 Activity ID · accepts .xlsx or .csv</span>
+      </div>
+    </div>
+
+    <div class="sync-tool-body">
+      <div class="sync-warning-box">
+        ⚠️ <strong>This will not create new activities.</strong> It only updates the dates of activities that already exist on your chart and have a matching P6 ID set. Make sure your activities have their P6 ID filled in (via the Activity Editor or Grid).
+      </div>
+
+      <p class="sync-col-heading" style="margin-top:14px">Required columns — same names as the bulk import template</p>
+      <table class="formatTable" style="max-width:640px">
+        <thead><tr><th>What it is</th><th>Column name(s) accepted</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>P6 Activity ID</td><td>P6ID · Activity ID · ID · Task ID · activity_id</td><td>A1000</td></tr>
+          <tr><td>Start date</td><td>Start · Start Date · Planned Start · Early Start · start_date</td><td>01/03/2026</td></tr>
+          <tr><td>Finish / End date</td><td>End · Finish · End Date · Planned Finish · Early Finish · finish</td><td>31/12/2026</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">
+        <strong>Tip:</strong> You can use the exact same file you use for bulk import — just make sure the P6ID column is filled in. The sync tool will ignore all columns except P6ID, Start, and End.
+        <br><strong>Date formats:</strong> DD/MM/YYYY &nbsp;·&nbsp; YYYY-MM-DD &nbsp;·&nbsp; DD-Mon-YYYY
+      </p>
+
+      <div class="sync-action-row">
+        <input type="file" id="p6File" accept=".xlsx,.xls,.csv">
+        <button onclick="importP6()" class="btn-sync-go btn-sync-go--p6">🔄 Sync Dates from P6</button>
+      </div>
+      <div id="csvDebug"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="canvas-wrap">
+  <canvas id="chartCanvas"></canvas>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section">
+  <div class="dash-header">
+    <div>
+      <h2 id="dashProjectName" style="margin:0;font-size:22px;font-weight:700;color:var(--text)">Programme Dashboard</h2>
+      <p id="dashSubtitle" style="margin:4px 0 0 0;font-size:13px;color:var(--text-muted)"></p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button onclick="renderDashboard()" class="btn-sm" style="margin:0" title="Refresh">↺ Refresh</button>
+      <button onclick="printDashboard()" style="background:#2c3e50;color:#fff;margin:0;padding:6px 14px;font-size:13px">🖨 Print Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Row 1: Scorecards -->
+  <div id="dashCards" class="dash-cards"></div>
+
+  <!-- Row 2: Health indicators -->
+  <div id="dashHealth" class="dash-health-row"></div>
+
+  <!-- Row 3: Visual analytics — two large donuts + timeline bar chart -->
+  <div class="dash-analytics-row">
+    <div class="dash-panel dash-donut-panel">
+      <div class="dash-panel-title">💰 Cost Breakdown</div>
+      <canvas id="dashCostPie" class="dash-donut-canvas"></canvas>
+      <div id="dashCostLegend" class="dash-donut-legend"></div>
+    </div>
+    <div class="dash-panel dash-donut-panel">
+      <div class="dash-panel-title">🏗 Activities by Zone / Type</div>
+      <canvas id="dashShapePie" class="dash-donut-canvas"></canvas>
+      <div id="dashShapeLegend" class="dash-donut-legend"></div>
+    </div>
+    <div class="dash-panel dash-timeline-panel">
+      <div class="dash-panel-title">📅 Activity Load — Next 12 Months</div>
+      <canvas id="dashTimelineBars" class="dash-timeline-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 4: Upcoming milestones + Zone breakdown + Critical path -->
+  <div class="dash-bottom-row">
+    <div class="dash-panel dash-milestones">
+      <div class="dash-panel-title">🚩 Upcoming Milestones</div>
+      <div id="dashMilestones"></div>
+    </div>
+    <div class="dash-panel dash-zones">
+      <div class="dash-panel-title">🏗 Zone Breakdown</div>
+      <div id="dashZones"></div>
+    </div>
+    <div class="dash-panel dash-critical">
+      <div class="dash-panel-title">🔴 Critical Path Summary</div>
+      <div id="dashCritical"></div>
+    </div>
+  </div>
+
+  <!-- Row 5: Risk summary -->
+  <div class="dash-bottom-row" style="margin-top:12px">
+    <div class="dash-panel" style="flex:1">
+      <div class="dash-panel-title">⚠️ Top Open Risks</div>
+      <div id="dashRisks"></div>
+    </div>
+    <div class="dash-panel" style="flex:1">
+      <div class="dash-panel-title">📊 Risk Profile</div>
+      <canvas id="dashRiskMatrix" width="220" height="180" style="display:block;margin:0 auto"></canvas>
+    </div>
+    <div class="dash-panel" style="flex:1">
+      <div class="dash-panel-title">💡 Risk Exposure</div>
+      <div id="dashRiskExposure"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/14.3.0/handsontable.full.min.js"></script>
+<script src="script.js"></script>
+<script>
+  const THEMES=['white','grey','dark','black'];
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme',theme);
+    localStorage.setItem('tcplanner_theme',theme);
+    THEMES.forEach(t=>document.getElementById('themeBtn-'+t).classList.toggle('active',t===theme));
+    // Redraw whichever chart is currently active
+    if(typeof chartViewMode==='undefined'||chartViewMode==='programme') {
+      if(typeof drawChart==='function') drawChart();
+    } else if(chartViewMode==='resource'  && typeof drawResourceChart==='function')  drawResourceChart();
+    else if(chartViewMode==='cost'        && typeof drawCostChart==='function')      drawCostChart();
+    else if(chartViewMode==='combined'    && typeof drawCombinedChart==='function')  drawCombinedChart();
+    else if(typeof drawChart==='function') drawChart();
+  }
+  (function(){setTheme(localStorage.getItem('tcplanner_theme')||'white');})();
+</script>
+</body>
+</html>

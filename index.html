@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chainage — Time-Chainage Planning for Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:     #0a0f1e;
+      --ink2:    #2d3a52;
+      --muted:   #6b7a96;
+      --border:  #e2e7f0;
+      --bg:      #f7f9fc;
+      --white:   #ffffff;
+      --accent:  #1a56db;
+      --accent2: #0e3fa8;
+      --green:   #059669;
+      --amber:   #d97706;
+      --red:     #dc2626;
+      --purple:  #7c3aed;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 20px; font-weight: 700; color: var(--ink);
+      text-decoration: none; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo-mark {
+      width: 32px; height: 32px; background: var(--accent);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo-mark svg { width: 18px; height: 18px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--ink2);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn-ghost {
+      font-size: 14px; font-weight: 500; color: var(--ink2);
+      text-decoration: none; padding: 8px 16px; border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-primary {
+      font-size: 14px; font-weight: 600; color: white;
+      background: var(--accent); text-decoration: none;
+      padding: 9px 20px; border-radius: 8px;
+      transition: background 0.15s; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary:hover { background: var(--accent2); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 40px 80px;
+      max-width: 1160px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #eff6ff; color: var(--accent);
+      font-size: 12px; font-weight: 600; padding: 5px 12px;
+      border-radius: 20px; border: 1px solid #bfdbfe;
+      margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .hero-badge span { font-size: 14px; }
+    h1 {
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -1.5px; color: var(--ink);
+      margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 18px; color: var(--ink2); font-weight: 400;
+      line-height: 1.6; margin-bottom: 36px; max-width: 440px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .btn-hero {
+      font-size: 16px; font-weight: 600; color: white;
+      background: var(--accent); text-decoration: none;
+      padding: 14px 28px; border-radius: 10px;
+      transition: background 0.15s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-hero:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-hero-ghost {
+      font-size: 16px; font-weight: 500; color: var(--ink2);
+      text-decoration: none; padding: 14px 24px; border-radius: 10px;
+      border: 1.5px solid var(--border); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-hero-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-trust {
+      margin-top: 32px; display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+    }
+    .trust-avatars { display: flex; }
+    .trust-avatars div {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid white; margin-left: -8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white;
+    }
+    .trust-avatars div:first-child { margin-left: 0; }
+
+    /* Hero chart preview */
+    .hero-visual {
+      background: var(--ink);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 32px 64px rgba(10,15,30,0.18), 0 0 0 1px rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .hero-visual-header {
+      background: #141b2d; padding: 12px 16px;
+      display: flex; align-items: center; gap: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .hero-visual-title {
+      margin-left: 8px; font-size: 12px; color: rgba(255,255,255,0.4);
+      font-family: 'DM Mono', monospace;
+    }
+    .hero-chart { padding: 20px; }
+    .chart-canvas {
+      width: 100%; height: 280px;
+      background: #0d1424;
+      border-radius: 8px; position: relative; overflow: hidden;
+    }
+    /* Animated chart bars */
+    .chart-grid {
+      position: absolute; inset: 30px 20px 40px 50px;
+    }
+    .chart-bar {
+      position: absolute; border-radius: 3px; opacity: 0;
+      animation: fadeInBar 0.4s forwards;
+    }
+    @keyframes fadeInBar {
+      to { opacity: 1; }
+    }
+    .chart-label {
+      position: absolute; font-size: 9px; color: rgba(255,255,255,0.3);
+      font-family: 'DM Mono', monospace;
+    }
+    .p-line {
+      position: absolute; left: 50px; right: 20px; height: 1.5px;
+      opacity: 0; animation: fadeInBar 0.3s 0.8s forwards;
+    }
+    .p-label {
+      position: absolute; right: 4px; font-size: 9px;
+      font-family: 'DM Mono', monospace; font-weight: 600;
+      transform: translateY(-50%);
+    }
+
+    /* ── LOGOS / SOCIAL PROOF ── */
+    .social-proof {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 40px;
+      text-align: center;
+    }
+    .social-proof p {
+      font-size: 13px; color: var(--muted); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 24px;
+    }
+    .logos {
+      display: flex; align-items: center; justify-content: center;
+      gap: 48px; flex-wrap: wrap;
+    }
+    .logo-item {
+      font-size: 15px; font-weight: 700; color: #c8d0e0;
+      letter-spacing: -0.3px; white-space: nowrap;
+    }
+
+    /* ── FEATURES ── */
+    .section { padding: 96px 40px; max-width: 1160px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+    h2 {
+      font-size: clamp(28px, 3vw, 42px); font-weight: 700;
+      letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 18px; color: var(--ink2); max-width: 520px;
+      line-height: 1.6; margin-bottom: 56px;
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      border-color: #bfdbfe;
+      box-shadow: 0 8px 24px rgba(26,86,219,0.08);
+    }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 16px; font-weight: 600; margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .feature-card p { font-size: 14px; color: var(--ink2); line-height: 1.6; }
+
+    /* ── VS TILOS ── */
+    .vs-section {
+      padding: 96px 40px; background: var(--ink);
+    }
+    .vs-inner { max-width: 1160px; margin: 0 auto; }
+    .vs-section .section-label { color: #60a5fa; }
+    .vs-section h2 { color: white; }
+    .vs-section .section-sub { color: #94a3b8; }
+    .comparison-table {
+      width: 100%; border-collapse: collapse; margin-top: 48px;
+    }
+    .comparison-table th {
+      padding: 16px 20px; text-align: left;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.03em;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .comparison-table th:not(:first-child) { text-align: center; }
+    .comparison-table th:nth-child(2) { color: #94a3b8; }
+    .comparison-table th:nth-child(3) {
+      color: #60a5fa; background: rgba(26,86,219,0.12);
+      border-radius: 8px 8px 0 0;
+    }
+    .comparison-table td {
+      padding: 14px 20px; font-size: 14px; color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .comparison-table td:first-child { color: #e2e8f0; font-weight: 500; }
+    .comparison-table td:not(:first-child) { text-align: center; }
+    .comparison-table td:nth-child(3) {
+      background: rgba(26,86,219,0.08); color: #93c5fd;
+    }
+    .check { color: #34d399; font-size: 18px; }
+    .cross { color: #f87171; font-size: 18px; }
+    .partial { color: #fbbf24; font-size: 13px; }
+    .price-highlight {
+      font-weight: 700; font-size: 15px;
+    }
+    .price-good { color: #34d399; }
+    .price-bad { color: #f87171; }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 56px; }
+    .step { text-align: center; }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #eff6ff; color: var(--accent);
+      font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      margin-top: 56px; align-items: start;
+    }
+    .pricing-card {
+      border: 1.5px solid var(--border); border-radius: 16px;
+      padding: 32px; background: var(--white);
+      transition: box-shadow 0.2s;
+    }
+    .pricing-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .pricing-card.popular {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+      position: relative;
+    }
+    .popular-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: white;
+      font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .plan-name { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+    .plan-price .amount { font-size: 42px; font-weight: 700; letter-spacing: -2px; }
+    .plan-price .period { font-size: 14px; color: var(--muted); }
+    .plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .plan-features li {
+      font-size: 14px; color: var(--ink2);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .btn-plan {
+      display: block; width: 100%; text-align: center;
+      padding: 13px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+      border: none; cursor: pointer;
+    }
+    .btn-plan-outline {
+      background: var(--bg); color: var(--ink2); border: 1.5px solid var(--border);
+    }
+    .btn-plan-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-plan-solid { background: var(--accent); color: white; }
+    .btn-plan-solid:hover { background: var(--accent2); }
+    .annual-note {
+      text-align: center; margin-top: 20px;
+      font-size: 13px; color: var(--muted);
+    }
+    .annual-note strong { color: var(--green); }
+
+    /* ── TESTIMONIAL ── */
+    .testimonial-section { background: var(--bg); padding: 96px 40px; }
+    .testimonial-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+    .quote-mark { font-size: 64px; line-height: 1; color: #bfdbfe; font-family: Georgia, serif; margin-bottom: -16px; display: block; }
+    blockquote { font-size: clamp(18px, 2vw, 24px); font-weight: 400; color: var(--ink); line-height: 1.5; margin-bottom: 24px; font-style: italic; }
+    .quote-author { font-size: 14px; color: var(--muted); font-weight: 500; }
+    .quote-author strong { color: var(--ink); font-weight: 600; }
+
+    /* ── RISK SECTION ── */
+    .risk-section { padding: 96px 40px; max-width: 1160px; margin: 0 auto; }
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 56px; }
+    .risk-features { display: flex; flex-direction: column; gap: 24px; }
+    .risk-item { display: flex; gap: 16px; align-items: flex-start; }
+    .risk-item-icon {
+      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .risk-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .risk-item p { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+    .risk-visual {
+      background: var(--ink); border-radius: 16px; padding: 24px;
+      box-shadow: 0 24px 48px rgba(10,15,30,0.15);
+    }
+    .risk-visual-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .p-date-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; }
+    .p-date-label { font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; }
+    .p-date-val { font-size: 13px; font-family: 'DM Mono', monospace; }
+    .p-date-diff { font-size: 11px; font-weight: 600; }
+    .p-base { background: rgba(255,255,255,0.06); }
+    .p-base .p-date-label { color: #94a3b8; }
+    .p-base .p-date-val { color: #e2e8f0; }
+    .p50 { background: rgba(251,191,36,0.1); }
+    .p50 .p-date-label { color: #fbbf24; }
+    .p50 .p-date-val { color: #fde68a; }
+    .p50 .p-date-diff { color: #fbbf24; }
+    .p80 { background: rgba(251,146,60,0.1); }
+    .p80 .p-date-label { color: #fb923c; }
+    .p80 .p-date-val { color: #fed7aa; }
+    .p80 .p-date-diff { color: #fb923c; }
+    .p90 { background: rgba(239,68,68,0.1); }
+    .p90 .p-date-label { color: #f87171; }
+    .p90 .p-date-val { color: #fecaca; }
+    .p90 .p-date-diff { color: #f87171; }
+    .risk-heat-mini { margin-top: 16px; }
+    .heat-row { display: flex; gap: 4px; margin-bottom: 4px; }
+    .heat-cell {
+      flex: 1; height: 28px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--accent); padding: 96px 40px; text-align: center;
+    }
+    .cta-section h2 { color: white; margin-bottom: 16px; }
+    .cta-section p { color: rgba(255,255,255,0.8); font-size: 18px; max-width: 480px; margin: 0 auto 40px; }
+    .btn-cta-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: white; color: var(--accent);
+      font-size: 16px; font-weight: 700; padding: 16px 32px;
+      border-radius: 10px; text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.16); }
+    .cta-note { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.65); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink); padding: 48px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .footer-logo { font-size: 18px; font-weight: 700; color: white; letter-spacing: -0.5px; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 13px; color: #64748b; text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: #94a3b8; }
+    .footer-copy { font-size: 12px; color: #475569; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; padding: 120px 24px 60px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .risk-grid { grid-template-columns: 1fr; }
+      .comparison-table { font-size: 12px; }
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .section { padding: 64px 24px; }
+    }
+    @media (max-width: 600px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .logos { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 14L6 8L10 11L14 4L16 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="2" y1="16" x2="16" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Chainage
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#comparison">vs TILOS</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#risk">Risk Intelligence</a>
+  </div>
+  <div class="nav-cta">
+    <a href="login.html" class="btn-ghost">Sign in</a>
+    <a href="signup.html" class="btn-primary">Start free trial →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div>
+      <div class="hero-badge"><span>🚧</span> Built by an HS2 Planner</div>
+      <h1>Time-Chainage Planning, <em>finally</em> done right</h1>
+      <p class="hero-sub">Professional time-chainage diagrams, critical path analysis, risk intelligence and programme dashboards — all in your browser. No installation. No per-seat licences in the thousands.</p>
+      <div class="hero-actions">
+        <a href="signup.html" class="btn-hero">Start free trial <span>→</span></a>
+        <a href="#features" class="btn-hero-ghost">See features</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-avatars">
+          <div style="background:#3b82f6">HS</div>
+          <div style="background:#10b981">RE</div>
+          <div style="background:#f59e0b">PM</div>
+          <div style="background:#8b5cf6">CE</div>
+        </div>
+        <span>Built on HS2 · trusted by infrastructure planners</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-header">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="hero-visual-title">Highway Improvement Scheme — Time-Chainage.tcplan</span>
+      </div>
+      <div class="hero-chart">
+        <div class="chart-canvas" id="heroChart">
+          <canvas id="demoCanvas" style="width:100%;height:100%;display:block"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="social-proof">
+  <p>Designed for professionals working on</p>
+  <div class="logos">
+    <div class="logo-item">Highways</div>
+    <div class="logo-item">Rail &amp; Possessions</div>
+    <div class="logo-item">Tunnelling</div>
+    <div class="logo-item">Pipeline</div>
+    <div class="logo-item">Utilities</div>
+    <div class="logo-item">Major Infrastructure</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything a planner actually needs</h2>
+  <p class="section-sub">Built by a senior planner working on HS2. Every feature exists because it was missing from existing tools.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#eff6ff">📐</div>
+      <h3>Time-Chainage Diagrams</h3>
+      <p>Professional canvas-based diagrams with drag, resize, multi-select and snap. All shapes — rectangles, lines, diamonds, stars, flags. Full colour control.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4">🔗</div>
+      <h3>Dependency Links</h3>
+      <p>Elbow-routed dependency arrows between activities. FS, SS, FF, SF link types with lag. Visual critical path highlighting with multi-path support.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fef9c3">⚠️</div>
+      <h3>Risk Intelligence</h3>
+      <p>Full risk register with P50/P80/P90 adjusted completion dates. Float vs risk analysis flags hidden critical paths. Mitigation tracking with overdue alerts.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fdf4ff">📊</div>
+      <h3>Programme Dashboard</h3>
+      <p>One-page client-facing summary: scorecards, cost breakdown, activity load, zone progress, critical path summary, and risk heat map.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff7ed">💰</div>
+      <h3>Resources & Costs</h3>
+      <p>Labour, equipment and material cost tracking per activity. Monthly resource histograms. S-curve generation. Cost breakdown donut charts.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdfa">📌</div>
+      <h3>Baseline Comparisons</h3>
+      <p>Save baselines at any point. Ghost overlay shows exactly where activities have slipped vs the original plan. Essential for commercial claims.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#eff6ff">🏗️</div>
+      <h3>Chainage Zones</h3>
+      <p>Define named zones across your corridor. Activities automatically grouped by zone. Zone breakdown on the dashboard with completion percentages.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fef2f2">📤</div>
+      <h3>Professional Exports</h3>
+      <p>Export to PDF (A1/A3/A4), PNG at up to 3× resolution, or Excel. Legend bundled automatically on page 2. Title block with your project details.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f0fdf4">🔄</div>
+      <h3>P6 & Excel Sync</h3>
+      <p>Bulk create activities from Excel. Sync updated dates from Primavera P6 by P6 ID. Your layout stays intact — only dates update.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VS TILOS -->
+<section class="vs-section" id="comparison">
+  <div class="vs-inner">
+    <div class="section-label">Comparison</div>
+    <h2>Why switch from TILOS?</h2>
+    <p class="section-sub" style="color:#94a3b8">TILOS is powerful but expensive, desktop-only, and hasn't meaningfully innovated in years. Chainage was built to fix that.</p>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th style="color:#e2e8f0;width:35%">Feature</th>
+          <th>TILOS (Trimble)</th>
+          <th>Chainage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pricing</td>
+          <td class="price-bad price-highlight">£3,000–5,000/seat/yr</td>
+          <td class="price-good price-highlight">From £49/month</td>
+        </tr>
+        <tr>
+          <td>Browser-based (no install)</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Time-chainage diagrams</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Risk register + P50/P80/P90</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Programme dashboard</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Float vs risk intelligence</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Baseline ghost overlay</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>P6 / Excel sync</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Works on Mac / Linux</td>
+          <td><span class="cross">✕</span> Windows only</td>
+          <td><span class="check">✓</span> Any browser</td>
+        </tr>
+        <tr>
+          <td>Sample projects / onboarding</td>
+          <td><span class="cross">✕</span></td>
+          <td><span class="check">✓</span> 5 industry samples</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-label">How it works</div>
+  <h2>Up and running in minutes</h2>
+  <p class="section-sub">No installation, no training course, no consultant to set it up. Just sign in and start planning.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Sign up</h3>
+      <p>Create your account. No credit card required for the 14-day trial.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Set your timeline</h3>
+      <p>Enter your project start/end dates and chainage range. Takes 30 seconds.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Add activities</h3>
+      <p>Manually, or bulk import from Excel. Or load one of 5 built-in industry samples.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Export &amp; share</h3>
+      <p>PDF, PNG, or share your dashboard. Professional outputs ready for any audience.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RISK SECTION -->
+<section class="risk-section" id="risk">
+  <div class="section-label">Risk Intelligence</div>
+  <h2>The risk register TILOS never built</h2>
+  <p class="section-sub">Log risks, track mitigations, and see how they affect your completion date — automatically.</p>
+  <div class="risk-grid">
+    <div class="risk-features">
+      <div class="risk-item">
+        <div class="risk-item-icon" style="background:#fff7ed">📅</div>
+        <div>
+          <h4>P50 / P80 / P90 Completion Dates</h4>
+          <p>Risk-adjusted completion scenarios calculated from your register. P80 is the date you commit to clients. All drawn automatically on your programme.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon" style="background:#fef2f2">⚡</div>
+        <div>
+          <h4>Float vs Risk Alerts</h4>
+          <p>Automatically flags activities where a risk exceeds available float — revealing hidden critical paths before they become real problems on site.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon" style="background:#f0fdf4">✅</div>
+        <div>
+          <h4>Mitigation Progress Tracking</h4>
+          <p>Every risk has a mitigation action, owner, due date and progress slider. Overdue mitigations are flagged automatically on the dashboard.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon" style="background:#eff6ff">🗺️</div>
+        <div>
+          <h4>Risk Heat Map</h4>
+          <p>5×5 probability-impact matrix showing where your risk mass is concentrated. Included on the dashboard print for senior stakeholders.</p>
+        </div>
+      </div>
+    </div>
+    <div class="risk-visual">
+      <div class="risk-visual-title">Risk-Adjusted Completion</div>
+      <div class="p-date-row p-base">
+        <span class="p-date-label">📅 Base</span>
+        <span class="p-date-val">20 Dec 2026</span>
+        <span class="p-date-diff" style="color:#94a3b8">Planned</span>
+      </div>
+      <div class="p-date-row p50">
+        <span class="p-date-label">P50</span>
+        <span class="p-date-val">14 Jan 2027</span>
+        <span class="p-date-diff">+25d</span>
+      </div>
+      <div class="p-date-row p80">
+        <span class="p-date-label">P80</span>
+        <span class="p-date-val">09 Feb 2027</span>
+        <span class="p-date-diff">+51d</span>
+      </div>
+      <div class="p-date-row p90">
+        <span class="p-date-label">P90</span>
+        <span class="p-date-val">05 Mar 2027</span>
+        <span class="p-date-diff">+75d</span>
+      </div>
+      <div style="margin-top:16px">
+        <div class="risk-visual-title" style="margin-bottom:8px">Risk Heat Map</div>
+        <div class="heat-row">
+          <div class="heat-cell" style="background:rgba(239,68,68,0.4)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.5)">●</div>
+          <div class="heat-cell" style="background:rgba(124,58,237,0.5)">●</div>
+          <div class="heat-cell" style="background:rgba(124,58,237,0.6)"></div>
+          <div class="heat-cell" style="background:rgba(124,58,237,0.7)"></div>
+        </div>
+        <div class="heat-row">
+          <div class="heat-cell" style="background:rgba(251,191,36,0.3)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.35)">●</div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.45)">●</div>
+          <div class="heat-cell" style="background:rgba(124,58,237,0.4)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.55)"></div>
+        </div>
+        <div class="heat-row">
+          <div class="heat-cell" style="background:rgba(52,211,153,0.2)"></div>
+          <div class="heat-cell" style="background:rgba(251,191,36,0.3)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.3)">●</div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.4)"></div>
+          <div class="heat-cell" style="background:rgba(124,58,237,0.4)"></div>
+        </div>
+        <div class="heat-row">
+          <div class="heat-cell" style="background:rgba(52,211,153,0.15)"></div>
+          <div class="heat-cell" style="background:rgba(52,211,153,0.2)"></div>
+          <div class="heat-cell" style="background:rgba(251,191,36,0.25)">●</div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.3)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.35)"></div>
+        </div>
+        <div class="heat-row">
+          <div class="heat-cell" style="background:rgba(52,211,153,0.1)"></div>
+          <div class="heat-cell" style="background:rgba(52,211,153,0.12)"></div>
+          <div class="heat-cell" style="background:rgba(52,211,153,0.15)"></div>
+          <div class="heat-cell" style="background:rgba(251,191,36,0.2)"></div>
+          <div class="heat-cell" style="background:rgba(239,68,68,0.25)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <span style="font-size:9px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace">1→ Likelihood →5</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:rgba(239,68,68,0.1);border-radius:8px;border-left:3px solid #f87171">
+        <div style="font-size:11px;color:#f87171;font-weight:700;margin-bottom:4px">⚡ Float Alert</div>
+        <div style="font-size:12px;color:#fca5a5">Zone A Excavation — risk (+21d) exceeds float (14d). Hidden critical path detected.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2>Straightforward pricing</h2>
+  <p class="section-sub">A fraction of the cost of TILOS. Cancel any time. 14-day free trial on all plans — no credit card required.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Individual</div>
+      <div class="plan-price">
+        <span class="amount">£49</span>
+        <span class="period">/month</span>
+      </div>
+      <p class="plan-desc">For solo planners and consultants working on linear infrastructure projects.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>1 user</li>
+        <li>Unlimited projects</li>
+        <li>Full time-chainage tool</li>
+        <li>Risk register + P50/P80/P90</li>
+        <li>PDF &amp; PNG export</li>
+        <li>P6 &amp; Excel sync</li>
+        <li>Email support</li>
+      </ul>
+      <a href="signup.html?plan=individual" class="btn-plan btn-plan-outline">Start free trial</a>
+    </div>
+    <div class="pricing-card popular">
+      <div class="popular-badge">Most Popular</div>
+      <div class="plan-name">Team</div>
+      <div class="plan-price">
+        <span class="amount">£149</span>
+        <span class="period">/month</span>
+      </div>
+      <p class="plan-desc">For planning teams on a single project or across multiple projects.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>Up to 5 users</li>
+        <li>Everything in Individual</li>
+        <li>Priority support</li>
+        <li>Early access to new features</li>
+        <li>Onboarding session included</li>
+      </ul>
+      <a href="signup.html?plan=team" class="btn-plan btn-plan-solid">Start free trial</a>
+    </div>
+    <div class="pricing-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">
+        <span class="amount">£399</span>
+        <span class="period">/month</span>
+      </div>
+      <p class="plan-desc">For contractors with multiple planning teams across projects.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>Unlimited users</li>
+        <li>Everything in Team</li>
+        <li>Custom export branding</li>
+        <li>Phone &amp; video support</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <a href="signup.html?plan=enterprise" class="btn-plan btn-plan-outline">Start free trial</a>
+    </div>
+  </div>
+  <p class="annual-note">Pay annually and save 20% — Individual <strong>£469/yr</strong> · Team <strong>£1,429/yr</strong> · Enterprise <strong>£3,829/yr</strong></p>
+</section>
+
+<!-- TESTIMONIAL -->
+<div class="testimonial-section">
+  <div class="testimonial-inner">
+    <span class="quote-mark">"</span>
+    <blockquote>Finally a time-chainage tool that doesn't feel like it was built in 2003. The risk register with P80 completion dates is the feature I've been asking for for years — I can now have a proper commercial conversation backed by data.</blockquote>
+    <p class="quote-author"><strong>Senior Planner</strong> · Major UK Infrastructure Project</p>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <h2>Ready to plan smarter?</h2>
+  <p>Start your 14-day free trial today. No credit card required. Cancel any time.</p>
+  <a href="signup.html" class="btn-cta-white">Get started for free →</a>
+  <p class="cta-note">Already have an account? <a href="login.html" style="color:rgba(255,255,255,0.8)">Sign in</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Chainage</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Chainage. All rights reserved.</div>
+</footer>
+
+<script>
+// Draw a mini time-chainage demo chart on the hero canvas
+window.addEventListener('load', () => {
+  const canvas = document.getElementById('demoCanvas');
+  if (!canvas) return;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * window.devicePixelRatio;
+  canvas.height = 280 * window.devicePixelRatio;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '280px';
+  const c = canvas.getContext('2d');
+  c.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = rect.width, H = 280;
+  const PAD = { t: 28, b: 32, l: 44, r: 16 };
+  const gW = W - PAD.l - PAD.r, gH = H - PAD.t - PAD.b;
+
+  c.fillStyle = '#0d1424';
+  c.fillRect(0, 0, W, H);
+
+  // Grid lines
+  c.strokeStyle = 'rgba(255,255,255,0.05)';
+  c.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = PAD.t + (i / 5) * gH;
+    c.beginPath(); c.moveTo(PAD.l, y); c.lineTo(W - PAD.r, y); c.stroke();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = PAD.l + (i / 8) * gW;
+    c.beginPath(); c.moveTo(x, PAD.t); c.lineTo(x, PAD.t + gH); c.stroke();
+  }
+
+  // Chainage labels
+  c.fillStyle = 'rgba(255,255,255,0.25)'; c.font = '9px DM Mono, monospace';
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  ['0','125','250','375','500','625','750','875','1000'].forEach((l,i) => {
+    c.fillText(l, PAD.l + (i/8)*gW, H - PAD.b + 6);
+  });
+
+  // Month labels
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  ['Jan','Mar','May','Jul','Sep','Nov'].forEach((l,i) => {
+    c.fillText(l, PAD.l - 4, PAD.t + (i/5)*gH + gH/10);
+  });
+
+  // Activity bars
+  const bars = [
+    { x: 0, y: 0.02, w: 1, h: 0.12, color: '#8b5cf6', alpha: 0.85 },
+    { x: 0, y: 0.14, w: 0.34, h: 0.22, color: '#e74c3c', alpha: 0.85 },
+    { x: 0.34, y: 0.22, w: 0.34, h: 0.22, color: '#c0392b', alpha: 0.85 },
+    { x: 0.68, y: 0.30, w: 0.32, h: 0.22, color: '#a93226', alpha: 0.85 },
+    { x: 0, y: 0.36, w: 0.34, h: 0.18, color: '#2980b9', alpha: 0.85 },
+    { x: 0.34, y: 0.44, w: 0.34, h: 0.18, color: '#2980b9', alpha: 0.85 },
+    { x: 0.68, y: 0.52, w: 0.32, h: 0.18, color: '#2980b9', alpha: 0.85 },
+    { x: 0, y: 0.54, w: 0.34, h: 0.16, color: '#f39c12', alpha: 0.85 },
+    { x: 0.34, y: 0.62, w: 0.34, h: 0.16, color: '#d68910', alpha: 0.85 },
+    { x: 0.68, y: 0.70, w: 0.32, h: 0.16, color: '#b7770d', alpha: 0.85 },
+    { x: 0, y: 0.78, w: 1, h: 0.14, color: '#d35400', alpha: 0.85 },
+  ];
+
+  bars.forEach(b => {
+    c.globalAlpha = b.alpha;
+    c.fillStyle = b.color;
+    const x = PAD.l + b.x * gW;
+    const y = PAD.t + b.y * gH;
+    const bw = b.w * gW - 2;
+    const bh = b.h * gH - 2;
+    c.beginPath();
+    c.roundRect(x, y, bw, Math.max(bh, 4), 3);
+    c.fill();
+  });
+  c.globalAlpha = 1;
+
+  // Data date line
+  const ddY = PAD.t + 0.45 * gH;
+  c.strokeStyle = '#e74c3c'; c.lineWidth = 1.5;
+  c.setLineDash([4, 3]);
+  c.beginPath(); c.moveTo(PAD.l, ddY); c.lineTo(W - PAD.r, ddY); c.stroke();
+  c.setLineDash([]);
+  c.fillStyle = '#e74c3c'; c.font = 'bold 9px DM Sans, sans-serif';
+  c.textAlign = 'right'; c.textBaseline = 'bottom';
+  c.fillText('▶ Data Date', W - PAD.r - 2, ddY - 2);
+
+  // P-lines
+  const plines = [
+    { y: 0.72, color: '#f59e0b', label: '◀ P50' },
+    { y: 0.82, color: '#f97316', label: '◀ P80' },
+    { y: 0.91, color: '#ef4444', label: '◀ P90' },
+  ];
+  plines.forEach(pl => {
+    const py = PAD.t + pl.y * gH;
+    c.strokeStyle = pl.color; c.lineWidth = 1.5;
+    c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(PAD.l, py); c.lineTo(W - PAD.r, py); c.stroke();
+    c.setLineDash([]);
+    c.font = 'bold 9px DM Mono, monospace';
+    c.fillStyle = pl.color; c.textAlign = 'right'; c.textBaseline = 'middle';
+    c.fillText(pl.label, W - PAD.r - 2, py);
+  });
+
+  // Zone backgrounds (subtle)
+  const zones = [
+    { x: 0, w: 0.333, color: 'rgba(52,152,219,0.06)' },
+    { x: 0.333, w: 0.334, color: 'rgba(39,174,96,0.06)' },
+    { x: 0.667, w: 0.333, color: 'rgba(230,126,34,0.06)' },
+  ];
+  zones.forEach(z => {
+    c.fillStyle = z.color;
+    c.fillRect(PAD.l + z.x * gW, PAD.t, z.w * gW, gH);
+  });
+});
+</script>
+</body>
+</html>
