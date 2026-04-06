@@ -165,8 +165,9 @@
   });
 
   async function checkAccessAndRedirect(user) {
-    // Check if user has active access (paid or beta)
-    const { data } = await sb.from('user_access').select('*').eq('user_id', user.id).single();
+    // Use limit(1) instead of single() to avoid errors with duplicate rows
+    const { data: rows } = await sb.from('user_access').select('*').eq('user_id', user.id).limit(1);
+    const data = rows && rows.length > 0 ? rows[0] : null;
     if (data && (data.is_beta || data.is_active)) {
       window.location.href = 'app/index.html';
     } else {
