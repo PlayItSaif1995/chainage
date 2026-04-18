@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — Chainage</title>
+  <link rel="stylesheet" href="/chainage/site.css">
+  <style>
+    .docs-layout{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:calc(100vh - 64px);margin-top:64px}
+    .docs-sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;border-right:1px solid var(--border);padding:28px 0;background:var(--bg);flex-shrink:0}
+    .docs-sidebar::-webkit-scrollbar{width:4px}.docs-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .sidebar-section{margin-bottom:24px;padding:0 20px}
+    .sidebar-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px;padding:0 4px}
+    .sidebar-link{display:block;font-size:13px;color:var(--ink2);text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .15s;margin-bottom:1px}
+    .sidebar-link:hover{background:var(--border);color:var(--ink)}
+    .sidebar-link.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+    .sidebar-link.sub{padding-left:20px;font-size:12px;color:var(--muted)}
+    .sidebar-link.sub:hover{color:var(--ink)}
+    .docs-content{padding:48px 64px 120px;max-width:820px}
+    .docs-content h1{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:-1.5px;margin-bottom:12px}
+    .docs-content h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.8px;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--border)}
+    .docs-content h2:first-of-type{border-top:none;margin-top:32px}
+    .docs-content h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:32px 0 10px;color:var(--ink)}
+    .docs-content p{color:var(--ink2);line-height:1.75;margin-bottom:14px;font-size:15px}
+    .docs-content ul,ol{color:var(--ink2);line-height:1.75;margin-bottom:16px;padding-left:22px;font-size:15px}
+    .docs-content li{margin-bottom:6px}
+    .docs-content code{font-family:'DM Mono',monospace;font-size:13px;background:var(--bg);border:1px solid var(--border);padding:2px 7px;border-radius:5px;color:var(--accent)}
+    .docs-content pre{background:var(--ink);color:#e2e8f0;padding:20px 24px;border-radius:12px;overflow-x:auto;margin:20px 0;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7}
+    .callout{border-radius:10px;padding:16px 20px;margin:20px 0;display:flex;gap:12px;align-items:flex-start;font-size:14px}
+    .callout-tip{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+    .callout-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .callout-info{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+    .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+    .kbd{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-bottom:2px solid #c8d0de;border-radius:5px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2)}
+    .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+    .feature-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .feature-item strong{display:block;margin-bottom:4px;font-size:14px}
+    .feature-item span{font-size:13px;color:var(--muted)}
+    /* Illustrations */
+    .illus{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:24px 0;padding:0}
+    .illus-caption{text-align:center;font-size:12px;color:var(--muted);padding:10px 0 14px;background:var(--bg)}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+    th{background:var(--bg);text-align:left;padding:10px 14px;font-weight:600;border:1px solid var(--border);font-size:13px}
+    td{padding:10px 14px;border:1px solid var(--border);color:var(--ink2);vertical-align:top}
+    tr:hover td{background:var(--bg)}
+    .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+    .tag-new{background:#dcfce7;color:#166534}
+    .tag-pro{background:#eff6ff;color:#1e40af}
+    @media(max-width:900px){.docs-layout{grid-template-columns:1fr}.docs-sidebar{display:none}.docs-content{padding:32px 20px 80px}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/chainage/">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
+    Chainage
+  </a>
+  <ul class="nav-links">
+    <li><a href="/chainage/#features">Features</a></li>
+    <li><a href="/chainage/pricing.html">Pricing</a></li>
+    <li><a href="/chainage/docs.html" class="active">Docs</a></li>
+    <li><a href="/chainage/changelog.html">Changelog</a></li>
+    <li><a href="/chainage/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a class="btn-ghost" href="/chainage/login.html">Sign in</a>
+    <a class="btn-primary" href="/chainage/signup.html">Start free trial →</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="docs-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Getting Started</div>
+      <a class="sidebar-link" href="#intro">What is Chainage?</a>
+      <a class="sidebar-link" href="#quickstart">Quick start guide</a>
+      <a class="sidebar-link" href="#interface">The interface</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Programme Setup</div>
+      <a class="sidebar-link" href="#settings">Project settings</a>
+      <a class="sidebar-link" href="#activities">Adding activities</a>
+      <a class="sidebar-link" href="#shapes">Activity shapes</a>
+      <a class="sidebar-link" href="#groups">Categories &amp; groups</a>
+      <a class="sidebar-link" href="#grid">Grid view</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Scheduling</div>
+      <a class="sidebar-link" href="#links">Dependency links</a>
+      <a class="sidebar-link" href="#scheduler">The scheduler</a>
+      <a class="sidebar-link" href="#calendars">Calendars</a>
+      <a class="sidebar-link" href="#critical-path">Critical path</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Analysis Views</div>
+      <a class="sidebar-link" href="#views">Overview of views</a>
+      <a class="sidebar-link" href="#float">Float analysis</a>
+      <a class="sidebar-link" href="#resources">Resources &amp; cost</a>
+      <a class="sidebar-link" href="#zones">Zone occupancy</a>
+      <a class="sidebar-link" href="#monte-carlo">Monte Carlo</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Programme Management</div>
+      <a class="sidebar-link" href="#baselines">Baselines &amp; revisions</a>
+      <a class="sidebar-link" href="#markers">Date markers</a>
+      <a class="sidebar-link" href="#p6">P6 / Primavera sync</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Output</div>
+      <a class="sidebar-link" href="#export">Export &amp; print</a>
+      <a class="sidebar-link" href="#popout">Pop-out view</a>
+      <a class="sidebar-link" href="#shortcuts">Keyboard shortcuts</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="docs-content">
+
+    <!-- ── INTRO ── -->
+    <div id="intro">
+      <div class="badge">Documentation</div>
+      <h1>Chainage User Guide</h1>
+      <p style="font-size:17px;color:var(--ink2)">Everything you need to plan, analyse, and communicate linear infrastructure programmes — from your first activity to Monte Carlo risk analysis.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div><strong>New to Chainage?</strong> Start with the <a href="#quickstart" style="color:var(--accent)">Quick start guide</a> and have a working programme in under 5 minutes.</div>
+      </div>
+
+      <h2 id="what">What is a time-chainage chart?</h2>
+      <p>A time-chainage chart (also called a time-distance diagram or linear schedule) plots work activities against both <strong>time</strong> (vertical axis) and <strong>chainage</strong> — location along a linear route (horizontal axis).</p>
+      <p>Unlike a Gantt chart which only shows when something happens, a time-chainage chart shows <strong>where</strong> it happens too. This is essential for roads, rail, tunnels, pipelines, and any project where production rates and location conflicts matter.</p>
+
+      <div class="illus">
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#f7f9fc">
+          <!-- Grid -->
+          <rect x="60" y="20" width="620" height="260" fill="white" stroke="#e2e7f0" stroke-width="1"/>
+          <!-- Year bands -->
+          <rect x="60" y="20" width="310" height="260" fill="rgba(26,86,219,0.04)"/>
+          <text x="215" y="40" text-anchor="middle" font-size="11" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="600">2026</text>
+          <text x="525" y="40" text-anchor="middle" font-size="11" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="600">2027</text>
+          <!-- Chainage axis -->
+          <text x="60" y="300" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">0</text>
+          <text x="215" y="300" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">500</text>
+          <text x="370" y="300" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">1000</text>
+          <text x="525" y="300" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">1500</text>
+          <text x="680" y="300" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">2000</text>
+          <!-- Month labels -->
+          <text x="40" y="75" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">Jan</text>
+          <text x="40" y="120" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">Apr</text>
+          <text x="40" y="165" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">Jul</text>
+          <text x="40" y="210" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">Oct</text>
+          <text x="40" y="255" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">Jan</text>
+          <!-- Grid lines -->
+          <line x1="60" y1="75" x2="680" y2="75" stroke="#e2e7f0" stroke-width="1"/>
+          <line x1="60" y1="120" x2="680" y2="120" stroke="#e2e7f0" stroke-width="1"/>
+          <line x1="60" y1="165" x2="680" y2="165" stroke="#e2e7f0" stroke-width="1"/>
+          <line x1="60" y1="210" x2="680" y2="210" stroke="#e2e7f0" stroke-width="1"/>
+          <line x1="215" y1="20" x2="215" y2="280" stroke="#e2e7f0" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="370" y1="20" x2="370" y2="280" stroke="#e2e7f0" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="525" y1="20" x2="525" y2="280" stroke="#e2e7f0" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- Zone tints -->
+          <rect x="60" y="20" width="155" height="260" fill="rgba(239,68,68,0.08)"/>
+          <rect x="215" y="20" width="155" height="260" fill="rgba(234,179,8,0.08)"/>
+          <rect x="370" y="20" width="155" height="260" fill="rgba(34,197,94,0.08)"/>
+          <rect x="525" y="20" width="155" height="260" fill="rgba(99,102,241,0.08)"/>
+          <!-- Activity 1 — Earthworks -->
+          <line x1="60" y1="60" x2="370" y2="155" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+          <text x="215" y="95" text-anchor="middle" font-size="10" fill="#e74c3c" font-family="DM Sans,sans-serif" font-weight="600">Earthworks</text>
+          <!-- Activity 2 — Drainage -->
+          <line x1="155" y1="80" x2="465" y2="175" stroke="#3498db" stroke-width="3" stroke-linecap="round"/>
+          <text x="310" y="115" text-anchor="middle" font-size="10" fill="#3498db" font-family="DM Sans,sans-serif" font-weight="600">Drainage</text>
+          <!-- Activity 3 — Paving -->
+          <line x1="280" y1="110" x2="580" y2="200" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+          <text x="430" y="143" text-anchor="middle" font-size="10" fill="#27ae60" font-family="DM Sans,sans-serif" font-weight="600">Paving</text>
+          <!-- Milestone -->
+          <polygon points="370,155 380,170 360,170" fill="#f39c12" opacity="0.9"/>
+          <text x="370" y="185" text-anchor="middle" font-size="9" fill="#f39c12" font-family="DM Sans,sans-serif">Handover</text>
+          <!-- Axis labels -->
+          <text x="370" y="315" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif" font-weight="600">Chainage (m) →</text>
+          <text x="15" y="150" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif" font-weight="600" transform="rotate(-90,15,150)">Time →</text>
+        </svg>
+        <div class="illus-caption">A typical time-chainage chart — activities show both when and where work happens. Steeper slopes = faster production rates.</div>
+      </div>
+
+      <p>The <strong>slope</strong> of an activity line represents its <strong>production rate</strong>. A steeper line means work is progressing faster along the chainage. Parallel lines mean activities are running at the same rate — useful for showing chase sequences where one trade follows another.</p>
+    </div>
+
+    <!-- ── QUICKSTART ── -->
+    <h2 id="quickstart">Quick start guide</h2>
+    <p>Get a working programme in 5 minutes:</p>
+    <ol>
+      <li><strong>Set your timeline</strong> — go to <em>Setup → Settings</em> and enter your project start and end dates, chainage range, and spacing.</li>
+      <li><strong>Add your first activity</strong> — go to <em>Activities → Editor</em> and fill in the form: name, start/end dates, start/end chainage, shape, and colour. Click <strong>Save Activity</strong>.</li>
+      <li><strong>Add more activities</strong> — repeat, or switch to <strong>Grid view</strong> to add many activities at once by typing or pasting from Excel.</li>
+      <li><strong>Link activities</strong> — go to <em>Logic → Relationships</em> to create Finish-to-Start or other dependency links between activities.</li>
+      <li><strong>Run the scheduler</strong> — click the <strong>Schedule</strong> button in the toolbar. Activities with dependencies will be pushed to respect their constraints.</li>
+      <li><strong>Export</strong> — go to <em>Output → Dashboard</em> to export as PNG, PDF, or Excel.</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">✓</span>
+      <div>Load the <strong>sample project</strong> from the <em>Open</em> menu to see a fully built programme with zones, dependencies, and risks — great for exploring features.</div>
+    </div>
+
+    <!-- ── INTERFACE ── -->
+    <h2 id="interface">The interface</h2>
+
+    <div class="illus">
+      <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#f7f9fc">
+        <!-- App chrome -->
+        <rect x="0" y="0" width="700" height="380" fill="#f1f3f7"/>
+        <!-- Header -->
+        <rect x="0" y="0" width="700" height="44" fill="#0a0f1e"/>
+        <text x="16" y="27" font-size="13" fill="white" font-family="DM Sans,sans-serif" font-weight="700">⛓ Chainage</text>
+        <rect x="440" y="10" width="50" height="24" rx="5" fill="#1a56db"/>
+        <text x="465" y="26" font-size="11" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">Save</text>
+        <rect x="498" y="10" width="50" height="24" rx="5" fill="#2d3a52"/>
+        <text x="523" y="26" font-size="11" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">Open</text>
+        <rect x="556" y="10" width="50" height="24" rx="5" fill="#2d3a52"/>
+        <text x="581" y="26" font-size="11" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">Export</text>
+        <rect x="615" y="10" width="50" height="24" rx="5" fill="#2d3a52"/>
+        <text x="640" y="26" font-size="11" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">Print</text>
+        <!-- Sidebar -->
+        <rect x="0" y="44" width="160" height="336" fill="#f9fafb" stroke="#e2e7f0" stroke-width="1"/>
+        <text x="12" y="65" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="700" letter-spacing="1">SETUP</text>
+        <text x="12" y="82" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">⚙ Settings</text>
+        <text x="12" y="98" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">📋 Title Block</text>
+        <text x="12" y="118" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="700" letter-spacing="1">PROGRAMME</text>
+        <text x="12" y="135" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">📅 Date Markers</text>
+        <text x="12" y="151" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">🏗 Zones</text>
+        <text x="12" y="167" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">📆 Calendars</text>
+        <text x="12" y="187" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="700" letter-spacing="1">ACTIVITIES</text>
+        <rect x="4" y="191" width="152" height="20" rx="4" fill="#1a56db"/>
+        <text x="12" y="205" font-size="11" fill="white" font-family="DM Sans,sans-serif" font-weight="600">✏ Editor</text>
+        <text x="12" y="222" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">📋 Activity List</text>
+        <text x="12" y="238" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">🗂 Grouping</text>
+        <text x="12" y="258" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="700" letter-spacing="1">LOGIC</text>
+        <text x="12" y="275" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">🔗 Relationships</text>
+        <text x="12" y="295" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="700" letter-spacing="1">ANALYSE</text>
+        <text x="12" y="312" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">📊 Float Analysis</text>
+        <text x="12" y="328" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">🎲 Risk Register</text>
+        <!-- Toolbar -->
+        <rect x="160" y="44" width="540" height="36" fill="#ffffff" stroke="#e2e7f0" stroke-width="1"/>
+        <rect x="172" y="52" width="80" height="20" rx="4" fill="#1a56db"/>
+        <text x="212" y="66" font-size="10" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">📅 Programme</text>
+        <rect x="258" y="52" width="70" height="20" rx="4" fill="#f1f3f7" stroke="#e2e7f0" stroke-width="1"/>
+        <text x="293" y="66" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif" text-anchor="middle">👷 Resources</text>
+        <rect x="334" y="52" width="50" height="20" rx="4" fill="#f1f3f7" stroke="#e2e7f0" stroke-width="1"/>
+        <text x="359" y="66" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif" text-anchor="middle">💰 Cost</text>
+        <rect x="390" y="52" width="50" height="20" rx="4" fill="#f1f3f7" stroke="#e2e7f0" stroke-width="1"/>
+        <text x="415" y="66" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif" text-anchor="middle">🌡 Float</text>
+        <rect x="600" y="52" width="70" height="20" rx="4" fill="#27ae60"/>
+        <text x="635" y="66" font-size="10" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">▶ Schedule</text>
+        <!-- Main panel -->
+        <rect x="160" y="80" width="540" height="160" fill="white" stroke="#e2e7f0" stroke-width="1"/>
+        <text x="350" y="108" text-anchor="middle" font-size="11" fill="#6b7a96" font-family="DM Sans,sans-serif">Form Editor</text>
+        <rect x="180" y="116" width="200" height="14" rx="3" fill="#f1f3f7"/>
+        <rect x="388" y="116" width="120" height="14" rx="3" fill="#f1f3f7"/>
+        <rect x="180" y="138" width="140" height="14" rx="3" fill="#f1f3f7"/>
+        <rect x="328" y="138" width="80" height="14" rx="3" fill="#f1f3f7"/>
+        <rect x="180" y="160" width="180" height="14" rx="3" fill="#f1f3f7"/>
+        <rect x="520" y="200" width="80" height="24" rx="5" fill="#1a56db"/>
+        <text x="560" y="216" font-size="10" fill="white" font-family="DM Sans,sans-serif" text-anchor="middle">Save Activity</text>
+        <!-- Canvas -->
+        <rect x="160" y="244" width="540" height="136" fill="#f7f9fc" stroke="#e2e7f0" stroke-width="1"/>
+        <line x1="160" y1="244" x2="700" y2="380" stroke="none"/>
+        <!-- Activity lines on canvas -->
+        <line x1="200" y1="260" x2="450" y2="340" stroke="#e74c3c" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="240" y1="268" x2="510" y2="345" stroke="#3498db" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="310" y1="280" x2="580" y2="355" stroke="#27ae60" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="450,340 458,352 442,352" fill="#f39c12"/>
+        <!-- Labels -->
+        <text x="380" y="370" text-anchor="middle" font-size="9" fill="#6b7a96" font-family="DM Sans,sans-serif">← Canvas (live chart — scrollable, zoomable)</text>
+        <!-- Annotations -->
+        <text x="350" y="420" text-anchor="middle" font-size="10" fill="#6b7a96" font-family="DM Sans,sans-serif">Sidebar</text>
+      </svg>
+      <div class="illus-caption">Chainage interface — sidebar navigation (left), form editor (top), live canvas chart (bottom)</div>
+    </div>
+
+    <p>The interface has three main areas:</p>
+    <ul>
+      <li><strong>Sidebar</strong> — navigate between all sections of the app. Grouped into Setup, Programme, Activities, Logic, Analyse, and Output. Click ☰ to collapse it.</li>
+      <li><strong>Main panel</strong> — the active section (editor, analysis, settings etc.) appears here above the canvas.</li>
+      <li><strong>Canvas</strong> — the live chart. Always visible. Updates in real time as you make changes.</li>
+    </ul>
+
+    <!-- ── SETTINGS ── -->
+    <h2 id="settings">Project settings</h2>
+    <p>Before adding activities, configure your project in <em>Setup → Settings</em>:</p>
+    <table>
+      <tr><th>Setting</th><th>Description</th></tr>
+      <tr><td><strong>Timeline Start / End</strong></td><td>The date range shown on the vertical axis. Set generously — you can always compress the view later.</td></tr>
+      <tr><td><strong>Min / Max Chainage</strong></td><td>The start and end of your route in metres (or any consistent unit). E.g. 0 to 10000 for a 10km road.</td></tr>
+      <tr><td><strong>Chainage Spacing</strong></td><td>Interval between gridline labels. 500 or 1000 works well for most projects.</td></tr>
+      <tr><td><strong>Reverse Chainage</strong></td><td>Flip the chainage axis so it runs right-to-left. Useful for some UK road conventions.</td></tr>
+      <tr><td><strong>Date Labels Right</strong></td><td>Move the month/year labels to the right margin instead of the left.</td></tr>
+      <tr><td><strong>Currency</strong></td><td>Sets the symbol for cost views (£, $, €).</td></tr>
+      <tr><td><strong>Theme</strong></td><td>Light, dark, grey, or black canvas background.</td></tr>
+    </table>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠</span>
+      <div>Settings changes only apply after clicking <strong>Apply Settings</strong>. Both Timeline Start and End must be set before the button activates.</div>
+    </div>
+
+    <!-- ── ACTIVITIES ── -->
+    <h2 id="activities">Adding activities</h2>
+    <p>Go to <em>Activities → Editor</em>. The editor has two modes — switch between them with the <strong>Form</strong> and <strong>Grid</strong> buttons:</p>
+
+    <h3>Form mode</h3>
+    <p>Add or edit one activity at a time. Fields:</p>
+    <ul>
+      <li><strong>Name</strong> — displayed on the chart if labels are enabled</li>
+      <li><strong>Start / End date</strong> — the time axis position</li>
+      <li><strong>Start Ch / End Ch</strong> — chainage positions (route start and end of the activity)</li>
+      <li><strong>Shape</strong> — how the activity is drawn (see below)</li>
+      <li><strong>Colour</strong> — hex colour for the activity bar or line</li>
+      <li><strong>Progress %</strong> — shown as a dark overlay on the bar</li>
+      <li><strong>Label</strong> — show activity name: no / left / centre / right</li>
+      <li><strong>Groups</strong> — assign to categories and subgroups for filtering and colouring</li>
+      <li><strong>Calendar</strong> — working day calendar for scheduling</li>
+      <li><strong>Resources</strong> — assign named resources from your Resource Library</li>
+    </ul>
+
+    <h3>Editing on the canvas</h3>
+    <p>You can also interact with activities directly on the canvas:</p>
+    <ul>
+      <li><strong>Click</strong> an activity to select it and load it into the form editor</li>
+      <li><strong>Drag</strong> to move it in time and chainage simultaneously</li>
+      <li><strong>Drag the top/bottom edge</strong> to change start/end date</li>
+      <li><strong>Drag the left/right edge</strong> to change start/end chainage</li>
+      <li><strong>Right-click</strong> for a context menu with edit, delete, and linking options</li>
+      <li><strong>Shift+click</strong> multiple activities to multi-select</li>
+    </ul>
+
+    <!-- ── SHAPES ── -->
+    <h2 id="shapes">Activity shapes</h2>
+    <div class="illus">
+      <svg viewBox="0 0 640 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:white;padding:16px 0">
+        <!-- Rect -->
+        <rect x="40" y="30" width="60" height="60" rx="4" fill="#3498db" opacity="0.85"/>
+        <text x="70" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">rect</text>
+        <!-- Line -->
+        <line x1="140" y1="30" x2="200" y2="90" stroke="#e74c3c" stroke-width="4" stroke-linecap="round"/>
+        <text x="170" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">line</text>
+        <!-- Circle -->
+        <circle cx="270" cy="60" r="22" fill="#27ae60" opacity="0.85"/>
+        <text x="270" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">circle</text>
+        <!-- Diamond -->
+        <polygon points="370,30 400,60 370,90 340,60" fill="#9b59b6" opacity="0.85"/>
+        <text x="370" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">diamond</text>
+        <!-- Triangle -->
+        <polygon points="470,30 500,90 440,90" fill="#f39c12" opacity="0.85"/>
+        <text x="470" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">triangle</text>
+        <!-- Star -->
+        <polygon points="570,30 577,52 600,52 582,66 589,90 570,76 551,90 558,66 540,52 563,52" fill="#e74c3c" opacity="0.85"/>
+        <text x="570" y="108" text-anchor="middle" font-size="11" fill="#2d3a52" font-family="DM Sans,sans-serif">star</text>
+      </svg>
+      <div class="illus-caption">The six activity shapes available in Chainage</div>
+    </div>
+    <table>
+      <tr><th>Shape</th><th>Best used for</th></tr>
+      <tr><td><code>rect</code></td><td>Standard activities with duration and extent along the route</td></tr>
+      <tr><td><code>line</code></td><td>Linear production activities (paving, drainage) — slope shows production rate</td></tr>
+      <tr><td><code>circle</code></td><td>Point events or inspections at a specific chainage</td></tr>
+      <tr><td><code>diamond</code></td><td>Milestones — key dates, handovers, approvals</td></tr>
+      <tr><td><code>triangle</code></td><td>Constraints, resource peaks, or alerts</td></tr>
+      <tr><td><code>star</code></td><td>Major milestones, project completion events</td></tr>
+    </table>
+
+    <!-- ── GROUPS ── -->
+    <h2 id="groups">Categories &amp; groups</h2>
+    <p>Groups let you organise activities into <strong>Categories</strong> (top level) and <strong>Sub-groups</strong> (nested under a category). Groups can be colour-coded and toggled for visibility on the chart.</p>
+    <p>Example structure:</p>
+    <pre>Zone A (category)
+  ├── Earthworks (subgroup)
+  ├── Drainage (subgroup)
+  └── Paving (subgroup)
+Zone B (category)
+  ├── Drainage (subgroup)
+  └── Structures (subgroup)</pre>
+    <p>Assign activities to groups via the form editor's <strong>Groups</strong> picker, or directly in the grid view's <strong>Groups</strong> column using the format <code>Category / Subgroup</code>. Separate multiple with semicolons: <code>Zone A / Drainage; Zone B / Paving</code>.</p>
+
+    <!-- ── GRID ── -->
+    <h2 id="grid">Grid view (bulk editing)</h2>
+    <p>Switch to <strong>Grid</strong> in the editor to edit all activities in a spreadsheet-like table. You can:</p>
+    <ul>
+      <li><strong>Paste from Excel</strong> — copy rows in Excel and press <kbd class="kbd">Ctrl+V</kbd> in the grid</li>
+      <li><strong>Edit the Groups column</strong> — type <code>Zone A / Drainage</code> to assign and auto-create groups</li>
+      <li><strong>Right-click a column header</strong> to sort, filter, or hide columns</li>
+      <li><strong>Drag the fill handle</strong> (bottom-right corner of a cell) to copy values down</li>
+      <li>Click <strong>+ 5 Rows</strong> to add blank rows for new activities</li>
+      <li>Click <strong>Clear Empty Rows</strong> to remove blank entries</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Date format in the grid is <strong>DD/MM/YYYY</strong>. The grid will highlight invalid dates in red.</div>
+    </div>
+
+    <!-- ── LINKS ── -->
+    <h2 id="links">Dependency links</h2>
+    <p>Go to <em>Logic → Relationships</em> to create links between activities. Chainage supports four standard CPM dependency types:</p>
+    <table>
+      <tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td><strong>FS</strong> — Finish to Start</td><td>B cannot start until A finishes</td><td>Drainage starts after Earthworks finishes</td></tr>
+      <tr><td><strong>SS</strong> — Start to Start</td><td>B cannot start until A starts</td><td>Kerbing starts with Drainage</td></tr>
+      <tr><td><strong>FF</strong> — Finish to Finish</td><td>B cannot finish until A finishes</td><td>Landscaping finishes with Paving</td></tr>
+      <tr><td><strong>SF</strong> — Start to Finish</td><td>B cannot finish until A starts</td><td>Rare — used for just-in-time constraints</td></tr>
+    </table>
+    <p>You can add a <strong>lag</strong> (positive or negative) to any link. A lag of +5 on an FS link means B starts 5 days after A finishes.</p>
+
+    <h3>Creating links quickly</h3>
+    <p>On the canvas, <strong>right-click</strong> an activity and select <em>Link selected in order (FS)</em> after shift-clicking multiple activities. This chains them in the order you clicked them.</p>
+
+    <!-- ── SCHEDULER ── -->
+    <h2 id="scheduler">The scheduler</h2>
+    <p>Click <strong>▶ Schedule</strong> in the toolbar to run the forward-pass scheduler. It pushes activity start dates forward to satisfy all dependency constraints.</p>
+
+    <div class="illus">
+      <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:white;padding:20px 40px">
+        <!-- Before -->
+        <text x="80" y="20" text-anchor="middle" font-size="11" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="600">BEFORE</text>
+        <rect x="20" y="30" width="80" height="22" rx="4" fill="#3498db" opacity="0.7"/>
+        <text x="60" y="45" text-anchor="middle" font-size="10" fill="white" font-family="DM Sans,sans-serif">Activity A</text>
+        <rect x="20" y="62" width="80" height="22" rx="4" fill="#e74c3c" opacity="0.7"/>
+        <text x="60" y="77" text-anchor="middle" font-size="10" fill="white" font-family="DM Sans,sans-serif">Activity B</text>
+        <text x="24" y="110" font-size="9" fill="#e74c3c" font-family="DM Sans,sans-serif">⚠ B starts before A finishes (FS violated)</text>
+        <!-- Arrow -->
+        <text x="180" y="75" font-size="20" fill="#6b7a96" font-family="DM Sans,sans-serif">→</text>
+        <text x="160" y="92" font-size="10" fill="#27ae60" font-family="DM Sans,sans-serif" font-weight="600">Schedule</text>
+        <!-- After -->
+        <text x="380" y="20" text-anchor="middle" font-size="11" fill="#6b7a96" font-family="DM Sans,sans-serif" font-weight="600">AFTER</text>
+        <rect x="220" y="30" width="80" height="22" rx="4" fill="#3498db" opacity="0.7"/>
+        <text x="260" y="45" text-anchor="middle" font-size="10" fill="white" font-family="DM Sans,sans-serif">Activity A</text>
+        <rect x="304" y="62" width="80" height="22" rx="4" fill="#e74c3c" opacity="0.7"/>
+        <text x="344" y="77" text-anchor="middle" font-size="10" fill="white" font-family="DM Sans,sans-serif">Activity B</text>
+        <line x1="300" y1="41" x2="304" y2="62" stroke="#6b7a96" stroke-width="1.5" marker-end="url(#arr)"/>
+        <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7a96"/></marker></defs>
+        <text x="224" y="110" font-size="9" fill="#27ae60" font-family="DM Sans,sans-serif">✓ B pushed to start after A finishes</text>
+      </svg>
+      <div class="illus-caption">The scheduler pushes activities forward to satisfy FS, SS, FF, and SF constraints</div>
+    </div>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠</span>
+      <div>The scheduler moves activities <strong>forward</strong> in time only. It will not move activities earlier than their manually set start date. Run it after adding or changing dependency links.</div>
+    </div>
+
+    <!-- ── CALENDARS ── -->
+    <h2 id="calendars">Calendars</h2>
+    <p>Calendars define which days are working days for an activity. Go to <em>Programme → Calendars</em> to create and manage calendars.</p>
+    <p>Two built-in calendars:</p>
+    <ul>
+      <li><strong>7-Day Standard</strong> — all days are working (default)</li>
+      <li><strong>5-Day Standard</strong> — Mon–Fri only</li>
+    </ul>
+    <p>Create custom calendars and click individual days to mark them as non-working (bank holidays, site shutdowns etc.).</p>
+    <p>When you assign a non-7-day calendar to an activity and run the scheduler, Chainage stretches the activity's end date to preserve the intended number of calendar days. Switch back to 7-day and the end date reverts exactly.</p>
+
+    <!-- ── CRITICAL PATH ── -->
+    <h2 id="critical-path">Critical path</h2>
+    <p>Enable <strong>Crit Path</strong> in the toolbar toggles to highlight activities with zero or negative float in red. The critical path is computed using the CPM backward pass — consistent with the Float Analysis tab.</p>
+
+    <!-- ── VIEWS ── -->
+    <h2 id="views">Overview of analysis views</h2>
+    <div class="feature-grid">
+      <div class="feature-item"><strong>📅 Programme</strong><span>The main time-chainage canvas. All activity editing happens here.</span></div>
+      <div class="feature-item"><strong>👷 Resources</strong><span>Daily worker histogram. Shows resource peaks and demand curves.</span></div>
+      <div class="feature-item"><strong>💰 Cost</strong><span>Monthly cost bars (labour, materials, equipment) with cumulative S-curve.</span></div>
+      <div class="feature-item"><strong>📊 Combined</strong><span>Resources and cost S-curve overlaid for integrated planning.</span></div>
+      <div class="feature-item"><strong>🌡 Float</strong><span>Colour-coded heatmap by float value — instantly see which activities are critical.</span></div>
+      <div class="feature-item"><strong>🏗 Zones</strong><span>Zone occupancy chart — see which activities share the same physical space and when.</span></div>
+    </div>
+
+    <!-- ── FLOAT ── -->
+    <h2 id="float">Float analysis</h2>
+    <p>Go to <em>Analyse → Float Analysis</em> for the full float report, or switch to the <strong>Float</strong> view in the toolbar to see a colour-coded heatmap on the canvas.</p>
+    <p>Float categories:</p>
+    <table>
+      <tr><th>Colour</th><th>Category</th><th>Float range</th></tr>
+      <tr><td><span style="display:inline-block;width:12px;height:12px;background:#e74c3c;border-radius:2px;vertical-align:middle"></span> Red</td><td>Critical</td><td>≤ 0 days</td></tr>
+      <tr><td><span style="display:inline-block;width:12px;height:12px;background:#e67e22;border-radius:2px;vertical-align:middle"></span> Orange</td><td>Near-critical</td><td>1–5 days</td></tr>
+      <tr><td><span style="display:inline-block;width:12px;height:12px;background:#f1c40f;border-radius:2px;vertical-align:middle"></span> Yellow</td><td>Low</td><td>6–14 days</td></tr>
+      <tr><td><span style="display:inline-block;width:12px;height:12px;background:#2ecc71;border-radius:2px;vertical-align:middle"></span> Green</td><td>OK</td><td>15–28 days</td></tr>
+      <tr><td><span style="display:inline-block;width:12px;height:12px;background:#3498db;border-radius:2px;vertical-align:middle"></span> Blue</td><td>Healthy</td><td>> 28 days</td></tr>
+    </table>
+
+    <!-- ── RESOURCES ── -->
+    <h2 id="resources">Resources &amp; cost</h2>
+    <p>Chainage has two resource modes:</p>
+    <ul>
+      <li><strong>Simple mode</strong> — enter Workers/day, Labour rate, Equipment hire/day, and Material cost directly on each activity in the form editor or grid.</li>
+      <li><strong>Library mode</strong> — build a named resource library (👷 Labour, 🚜 Plant, 🧱 Materials) and assign specific resources to activities. Rates and quantities are tracked per resource.</li>
+    </ul>
+    <p>Costs are aggregated into the <strong>Cost</strong> and <strong>Combined</strong> chart views as monthly bars and a cumulative S-curve.</p>
+
+    <!-- ── ZONES ── -->
+    <h2 id="zones">Zone occupancy</h2>
+    <p>Zones define physical areas of your route — e.g. Zone A: Ch 0–200, Zone B: Ch 200–500. Go to <em>Programme → Zones</em> to create them.</p>
+    <p>The <strong>Zone Occupancy</strong> view shows a Gantt-style chart of which activities are active in each zone over time. <span style="color:#e74c3c">Red dashed outlines</span> indicate activities that overlap in the same zone at the same time — a potential clash requiring coordination.</p>
+
+    <!-- ── MONTE CARLO ── -->
+    <h2 id="monte-carlo">Monte Carlo risk analysis</h2>
+    <p>Chainage includes a built-in Monte Carlo simulation engine using the <strong>PERT Beta distribution</strong> — the industry-standard approach for schedule risk analysis.</p>
+
+    <div class="illus">
+      <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#1a1a2e;padding:20px">
+        <!-- S-curve area -->
+        <path d="M60,170 Q100,168 140,160 Q180,148 220,128 Q260,104 300,80 Q340,58 380,45 Q420,36 460,32 Q500,30 540,29" fill="none" stroke="#3498db" stroke-width="2.5"/>
+        <!-- P50 -->
+        <line x1="240" y1="20" x2="240" y2="170" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="244" y="34" font-size="9" fill="#27ae60" font-family="DM Mono,monospace">P50</text>
+        <!-- P80 -->
+        <line x1="310" y1="20" x2="310" y2="170" stroke="#f39c12" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="314" y="34" font-size="9" fill="#f39c12" font-family="DM Mono,monospace">P80</text>
+        <!-- P90 -->
+        <line x1="370" y1="20" x2="370" y2="170" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="374" y="34" font-size="9" fill="#e74c3c" font-family="DM Mono,monospace">P90</text>
+        <!-- Axes -->
+        <line x1="60" y1="170" x2="560" y2="170" stroke="#2e4060" stroke-width="1"/>
+        <line x1="60" y1="20" x2="60" y2="170" stroke="#2e4060" stroke-width="1"/>
+        <text x="310" y="190" text-anchor="middle" font-size="9" fill="#4da3ff" font-family="DM Sans,sans-serif">Delay (days) →</text>
+        <text x="24" y="100" font-size="9" fill="#4da3ff" font-family="DM Sans,sans-serif" transform="rotate(-90,24,100)">Probability →</text>
+      </svg>
+      <div class="illus-caption">Monte Carlo S-curve — 10,000 simulations produce P50/P80/P90 completion dates. Hover to read off any probability.</div>
+    </div>
+
+    <p>To use Monte Carlo:</p>
+    <ol>
+      <li>Go to <em>Analyse → Risk Register</em> and add risks — set Likelihood, Impact, and which activities are affected.</li>
+      <li>Switch to the <strong>Monte Carlo</strong> view in the toolbar.</li>
+      <li>The simulation runs automatically and shows the S-curve with P50, P80, and P90 projected completion dates.</li>
+      <li>Hover over the curve to read off the probability of completing by any given date.</li>
+    </ol>
+
+    <!-- ── BASELINES ── -->
+    <h2 id="baselines">Baselines &amp; revisions</h2>
+    <p>In <em>Analyse → Baselines</em>, you can snapshot the current programme as a baseline. The baseline appears as faint ghost bars behind the live activities, making progress and slippage immediately visible.</p>
+    <p>In <em>Analyse → Revisions</em>, create a named revision of the programme (e.g. "Rev 3 — April submission") to track how the programme has changed over time.</p>
+
+    <!-- ── MARKERS ── -->
+    <h2 id="markers">Date markers</h2>
+    <p>Date markers are horizontal lines drawn across the full chainage width at a specific date — useful for contract milestones, key handovers, or access restrictions. Go to <em>Programme → Date Markers</em> to add them. Each marker has a name, date, and colour, and shows as a labelled pill on the canvas.</p>
+
+    <!-- ── P6 ── -->
+    <h2 id="p6">P6 / Primavera sync</h2>
+    <p>Chainage can sync activity dates from Primavera P6 using P6 Activity IDs:</p>
+    <ol>
+      <li>Enter a <strong>P6 ID</strong> on each activity in the form editor or grid view.</li>
+      <li>Export updated dates from P6 as a CSV or copy them from P6's columns.</li>
+      <li>Go to <em>Output → Sync &amp; Import</em> and paste or upload the P6 data.</li>
+      <li>Chainage matches activities by P6 ID and updates their start/end dates.</li>
+    </ol>
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>Full P6 XML import is on the roadmap. <a href="/chainage/contact.html" style="color:var(--accent)">Let us know</a> if this is a priority for your team.</div>
+    </div>
+
+    <!-- ── EXPORT ── -->
+    <h2 id="export">Export &amp; print</h2>
+    <p>Go to <em>Output → Dashboard</em> to export the programme:</p>
+    <table>
+      <tr><th>Format</th><th>Details</th></tr>
+      <tr><td><strong>PNG</strong></td><td>High-resolution image of the current view at 1×, 2×, or 3× resolution</td></tr>
+      <tr><td><strong>PDF</strong></td><td>A3 or A1 landscape PDF — print-ready with title block</td></tr>
+      <tr><td><strong>Excel (.xlsx)</strong></td><td>Activity data table with all fields — for reporting and review</td></tr>
+      <tr><td><strong>.tcplan file</strong></td><td>Save your full programme to disk for re-opening later</td></tr>
+    </table>
+    <p>Use the <strong>Print</strong> button in the header to send directly to a printer, or use the <strong>Export</strong> button for file downloads.</p>
+
+    <!-- ── POPOUT ── -->
+    <h2 id="popout">Pop-out live preview</h2>
+    <p>Click the <strong>⧉</strong> button in the header to open a live preview of the chart in a separate browser window. This is useful when working on a second monitor — the popout updates automatically every time you make a change. All 7 chart views are available in the popout.</p>
+
+    <!-- ── SHORTCUTS ── -->
+    <h2 id="shortcuts">Keyboard shortcuts</h2>
+    <table>
+      <tr><th>Shortcut</th><th>Action</th></tr>
+      <tr><td><kbd class="kbd">Ctrl+Z</kbd></td><td>Undo</td></tr>
+      <tr><td><kbd class="kbd">Ctrl+Y</kbd></td><td>Redo</td></tr>
+      <tr><td><kbd class="kbd">Ctrl+S</kbd></td><td>Save programme to file</td></tr>
+      <tr><td><kbd class="kbd">Ctrl+N</kbd></td><td>New programme</td></tr>
+      <tr><td><kbd class="kbd">Delete</kbd></td><td>Delete selected activity</td></tr>
+      <tr><td><kbd class="kbd">Escape</kbd></td><td>Deselect / cancel</td></tr>
+      <tr><td><kbd class="kbd">A</kbd></td><td>Add new activity (opens editor)</td></tr>
+      <tr><td><kbd class="kbd">G</kbd></td><td>Open Grouping panel</td></tr>
+      <tr><td><kbd class="kbd">?</kbd></td><td>Show keyboard shortcuts</td></tr>
+      <tr><td><kbd class="kbd">Shift+click</kbd></td><td>Multi-select activities</td></tr>
+      <tr><td><kbd class="kbd">Right-click</kbd></td><td>Context menu on canvas</td></tr>
+    </table>
+
+    <div style="background:var(--bg);border-radius:12px;padding:24px;margin-top:48px;text-align:center">
+      <p style="font-weight:600;margin-bottom:6px">Still have questions?</p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">We're happy to help — usually within one business day.</p>
+      <a href="/chainage/contact.html" class="btn-primary">Contact us →</a>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Highlight active sidebar link on scroll
+const links = document.querySelectorAll('.sidebar-link');
+const sections = [...links].map(l => {
+  const id = l.getAttribute('href').replace('#','');
+  return document.getElementById(id);
+}).filter(Boolean);
+
+function onScroll(){
+  const scrollY = window.scrollY + 120;
+  let active = null;
+  sections.forEach((s,i)=>{
+    if(s && s.offsetTop <= scrollY) active = i;
+  });
+  links.forEach((l,i)=>{
+    l.classList.toggle('active', i === active);
+  });
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+</script>
+
+<footer style="margin-top:0">
+  <div class="footer-grid">
+    <div class="footer-brand"><a class="footer-logo" href="/chainage/"><div class="footer-logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>Chainage</a><p>Professional time-chainage planning for linear infrastructure projects. Built by planners, for planners.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="/chainage/#features">Features</a><a href="/chainage/pricing.html">Pricing</a><a href="/chainage/changelog.html">Changelog</a><a href="/chainage/docs.html">Documentation</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="/chainage/contact.html">Contact</a><a href="/chainage/news.html">News</a><a href="/chainage/terms.html">Terms of Service</a><a href="/chainage/privacy.html">Privacy Policy</a></div>
+    <div class="footer-col"><h4>Resources</h4><a href="/chainage/docs.html">Getting Started</a><a href="/chainage/docs.html#scheduler">Scheduler Guide</a><a href="/chainage/docs.html#monte-carlo">Monte Carlo</a><a href="/chainage/app/">Launch App →</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Chainage. All rights reserved.</p><div class="footer-bottom-links"><a href="/chainage/terms.html">Terms</a><a href="/chainage/privacy.html">Privacy</a><a href="/chainage/contact.html">Contact</a></div></div>
+</footer>
+</body>
+</html>

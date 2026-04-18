@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Chainage</title>
+  <link rel="stylesheet" href="/chainage/site.css">
+  <style>
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:56px;padding-bottom:80px}
+    label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink2)}
+    input,textarea,select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);transition:border-color .15s;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+    textarea{resize:vertical;min-height:140px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .contact-info-item{display:flex;gap:14px;align-items:flex-start;padding:20px;border:1px solid var(--border);border-radius:12px;margin-bottom:16px}
+    .contact-icon{width:40px;height:40px;background:var(--accent-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+    @media(max-width:768px){.contact-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="/chainage/">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
+    Chainage
+  </a>
+  <ul class="nav-links">
+    <li><a href="/chainage/#features">Features</a></li>
+    <li><a href="/chainage/pricing.html">Pricing</a></li>
+    <li><a href="/chainage/docs.html">Docs</a></li>
+    <li><a href="/chainage/changelog.html">Changelog</a></li>
+    <li><a href="/chainage/contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a class="btn-ghost" href="/chainage/login.html">Sign in</a>
+    <a class="btn-primary" href="/chainage/signup.html">Start free trial →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="badge">Get in touch</div>
+  <h1>We'd love to hear from you</h1>
+  <p>Questions, feedback, enterprise enquiries — we read every message.</p>
+</div>
+
+<div class="page-wrap">
+  <div class="contact-grid">
+    <!-- Form -->
+    <div>
+      <form onsubmit="handleSubmit(event)">
+        <div class="form-row" style="margin-bottom:20px">
+          <div>
+            <label>First name</label>
+            <input type="text" placeholder="John" required>
+          </div>
+          <div>
+            <label>Last name</label>
+            <input type="text" placeholder="Smith" required>
+          </div>
+        </div>
+        <div style="margin-bottom:20px">
+          <label>Work email</label>
+          <input type="email" placeholder="john@company.com" required>
+        </div>
+        <div style="margin-bottom:20px">
+          <label>Company</label>
+          <input type="text" placeholder="EKFB, Bechtel, Turner & Townsend...">
+        </div>
+        <div style="margin-bottom:20px">
+          <label>Subject</label>
+          <select>
+            <option>General enquiry</option>
+            <option>Enterprise / Team pricing</option>
+            <option>Technical support</option>
+            <option>Feature request</option>
+            <option>Bug report</option>
+            <option>Press / media</option>
+            <option>Partnership</option>
+          </select>
+        </div>
+        <div style="margin-bottom:24px">
+          <label>Message</label>
+          <textarea placeholder="Tell us what's on your mind..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px">Send message →</button>
+      </form>
+      <div id="form-success" style="display:none;background:#dcfce7;border:1px solid #bbf7d0;border-radius:10px;padding:20px;text-align:center;margin-top:16px">
+        <div style="font-size:24px;margin-bottom:8px">✓</div>
+        <strong>Message sent!</strong><br><span style="color:var(--muted);font-size:14px">We'll get back to you within 1–2 business days.</span>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div>
+      <h3 style="margin-bottom:8px">Other ways to reach us</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:28px">We typically respond within one business day.</p>
+
+      <div class="contact-info-item">
+        <div class="contact-icon">📧</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:2px">Email</div>
+          <div style="font-size:14px;color:var(--muted)">hello@chainage.net</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">For general enquiries and support</div>
+        </div>
+      </div>
+
+      <div class="contact-info-item">
+        <div class="contact-icon">🏗️</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:2px">Enterprise enquiries</div>
+          <div style="font-size:14px;color:var(--muted)">enterprise@chainage.net</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">Custom onboarding, SLAs, integrations</div>
+        </div>
+      </div>
+
+      <div class="contact-info-item">
+        <div class="contact-icon">🐛</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:2px">Bug reports</div>
+          <div style="font-size:14px;color:var(--muted);font-family:'DM Mono',monospace">github.com/PlayItSaif1995/chainage/issues</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">For technical issues and bugs</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:12px;padding:24px;margin-top:32px">
+        <div style="font-weight:600;margin-bottom:8px">💡 Frequently asked first</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="/chainage/docs.html" style="font-size:14px;color:var(--accent);text-decoration:none">→ Getting started guide</a></li>
+          <li><a href="/chainage/pricing.html#faq" style="font-size:14px;color:var(--accent);text-decoration:none">→ Pricing FAQ</a></li>
+          <li><a href="/chainage/docs.html#p6" style="font-size:14px;color:var(--accent);text-decoration:none">→ P6 / Primavera integration</a></li>
+          <li><a href="/chainage/changelog.html" style="font-size:14px;color:var(--accent);text-decoration:none">→ Latest updates</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function handleSubmit(e){
+  e.preventDefault();
+  document.getElementById('form-success').style.display='block';
+  e.target.style.display='none';
+}
+</script>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a class="footer-logo" href="/chainage/"><div class="footer-logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>Chainage</a><p>Professional time-chainage planning for linear infrastructure projects.</p></div>
+    <div class="footer-col"><h4>Product</h4><a href="/chainage/#features">Features</a><a href="/chainage/pricing.html">Pricing</a><a href="/chainage/changelog.html">Changelog</a><a href="/chainage/docs.html">Documentation</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="/chainage/contact.html">Contact</a><a href="/chainage/news.html">News</a><a href="/chainage/terms.html">Terms of Service</a><a href="/chainage/privacy.html">Privacy Policy</a></div>
+    <div class="footer-col"><h4>Resources</h4><a href="/chainage/docs.html">Getting Started</a><a href="/chainage/docs.html#scheduler">Scheduler Guide</a><a href="/chainage/docs.html#monte-carlo">Monte Carlo</a><a href="/chainage/app/">Launch App →</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Chainage. All rights reserved.</p><div class="footer-bottom-links"><a href="/chainage/terms.html">Terms</a><a href="/chainage/privacy.html">Privacy</a><a href="/chainage/contact.html">Contact</a></div></div>
+</footer>
+</body>
+</html>
