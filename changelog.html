@@ -8,138 +8,176 @@
 </head>
 <body>
 <nav>
-  <a class="logo" href="/chainage/">
-    <div class="logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
+  <a href="/chainage/" class="nav-logo">
+    <div class="nav-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
     Chainage
   </a>
   <ul class="nav-links">
     <li><a href="/chainage/#features">Features</a></li>
     <li><a href="/chainage/pricing.html">Pricing</a></li>
     <li><a href="/chainage/docs.html">Docs</a></li>
-    <li><a href="/chainage/changelog.html" class="active">Changelog</a></li>
+    <li><a href="/chainage/changelog.html">Changelog</a></li>
     <li><a href="/chainage/contact.html">Contact</a></li>
   </ul>
   <div class="nav-cta">
-    <a class="btn-ghost" href="/chainage/login.html">Sign in</a>
-    <a class="btn-primary" href="/chainage/signup.html">Start free trial →</a>
+    <a href="/chainage/login.html" class="btn-ghost">Sign in</a>
+    <a href="/chainage/signup.html" class="btn-primary">Start free trial →</a>
   </div>
 </nav>
 
 <div class="page-hero">
   <div class="badge">What's new</div>
   <h1>Changelog</h1>
-  <p>Every improvement, fix, and new feature — in order, with dates.</p>
+  <p>Every improvement, fix, and new feature — documented in order.</p>
 </div>
-
-<div class="page-wrap" style="padding-bottom:80px;max-width:800px">
-
-  <!-- v1.0 -->
-  <div style="display:grid;grid-template-columns:160px 1fr;gap:32px;margin-bottom:56px;align-items:start">
-    <div style="text-align:right;padding-top:6px">
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">April 2026</div>
-      <div style="background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px">v1.0</div>
-    </div>
-    <div>
-      <h3 style="margin-bottom:4px">Monte Carlo Risk Engine & S-Curve View</h3>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Major analysis release</p>
-      <ul style="display:flex;flex-direction:column;gap:8px;list-style:none">
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Proper PERT Beta Monte Carlo engine — 10,000 iterations using Marsaglia-Tsang gamma sampling</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Risk correlation groups — risks in the same group fire together in simulation</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Monte Carlo S-Curve view with P50/P80/P90 lines, histogram, and hover tooltips</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">FIX</span> Critical path toggle now uses proper CPM float engine — consistent with Float Analysis tab</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">FIX</span> Canvas ResizeObserver infinite loop resolved — no more jumping on hover</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">UX</span> Shape-aware selection rings — diamonds, circles, stars no longer show ugly bounding boxes</li>
-      </ul>
-    </div>
+<div class="page-wrap" style="max-width:860px">
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">April 2026</div>
+    <div style="background:#1a56db;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v1.2</div>
   </div>
-
-  <div style="border-top:1px solid var(--border);margin-bottom:56px"></div>
-
-  <!-- v0.9 -->
-  <div style="display:grid;grid-template-columns:160px 1fr;gap:32px;margin-bottom:56px;align-items:start">
-    <div style="text-align:right;padding-top:6px">
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">April 2026</div>
-      <div style="background:var(--ink2);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px">v0.9</div>
-    </div>
-    <div>
-      <h3 style="margin-bottom:4px">Calendar System</h3>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Working day scheduling</p>
-      <ul style="display:flex;flex-direction:column;gap:8px;list-style:none">
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Visual calendar builder with month-grid day picker — click days to mark non-working</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Calendar assignment per activity — 7-day and 5-day Standard built in</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Scheduler stretches/shrinks bars based on calendar — switch 7-day→5-day and re-schedule correctly</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Duplicate calendar button</li>
-      </ul>
-    </div>
+  <div>
+    <h3 style="margin-bottom:4px">Guided Tour, Draw-to-Create & Grid Overhaul</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">UX and onboarding release</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>9-step interactive guided tour with spotlight highlights — launches on first open or via the ? menu</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Draw-to-create on canvas — press D or click &#x270F; Draw, then drag diagonally to place a new activity at exact dates and chainages</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Grid view column tiers — 9 core columns visible by default, advanced columns hidden; use the &#x229E; Columns picker to toggle</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Colour palette picker in grid — click any Colour cell to pick from 28 infrastructure-friendly swatches</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Black theme button colours — --btn-primary-bg variable ensures buttons use blue in all themes</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Scheduler resets successors to originalStart before forward pass — switching calendars no longer leaves downstream activities stranded</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Schedule confirmation modal warns user before running CPM forward pass</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>? button now opens help menu with Documentation, Guided Tour, and Keyboard Shortcuts</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>Popout window tooltips correct for all 7 views including float labels, zone clashes, and Monte Carlo P-bands</span></li></ul>
   </div>
-
-  <div style="border-top:1px solid var(--border);margin-bottom:56px"></div>
-
-  <!-- v0.8 -->
-  <div style="display:grid;grid-template-columns:160px 1fr;gap:32px;margin-bottom:56px;align-items:start">
-    <div style="text-align:right;padding-top:6px">
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">April 2026</div>
-      <div style="background:var(--ink2);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px">v0.8</div>
-    </div>
-    <div>
-      <h3 style="margin-bottom:4px">UI Redesign & SaaS Launch</h3>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Major UX overhaul + commercial infrastructure</p>
-      <ul style="display:flex;flex-direction:column;gap:8px;list-style:none">
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#f3e8ff;color:#6b21a8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">SAAS</span> Supabase authentication — login, signup, password reset</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#f3e8ff;color:#6b21a8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">SAAS</span> Stripe subscription billing — Individual, Team, Enterprise tiers</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">UX</span> Fixed sidebar replacing tab bar — collapsible, grouped by workflow stage</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">UX</span> Dark, grey, and black themes</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">UX</span> Keyboard shortcuts panel (press ?)</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Editable grid view (Handsontable) with Excel paste support</li>
-      </ul>
-    </div>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">April 2026</div>
+    <div style="background:#1a56db;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v1.1</div>
   </div>
-
-  <div style="border-top:1px solid var(--border);margin-bottom:56px"></div>
-
-  <!-- Earlier -->
-  <div style="display:grid;grid-template-columns:160px 1fr;gap:32px;margin-bottom:56px;align-items:start">
-    <div style="text-align:right;padding-top:6px">
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Feb–Mar 2026</div>
-      <div style="background:var(--muted);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px">v0.1–0.6</div>
-    </div>
-    <div>
-      <h3 style="margin-bottom:4px">Foundation & Core Features</h3>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Initial build — canvas, activities, dependencies, analysis</p>
-      <ul style="display:flex;flex-direction:column;gap:8px;list-style:none">
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> HTML5 canvas time-chainage chart with drag, resize, and milestone shapes</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> FS/SS/FF/SF dependency links with CPM forward-pass scheduler</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Float Analysis with CPM backward pass and scorecards</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Resource histogram, cost S-curve, and combined chart views</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Baselines, revisions, date markers, chainage zones</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Risk register with 5×5 likelihood/impact matrix</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Resource Library with named resources and activity assignment</li>
-        <li style="display:flex;gap:10px;font-size:14px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:1px">NEW</span> Save/open .tcplan files, PNG/PDF/Excel export, print multiple views</li>
-      </ul>
-    </div>
+  <div>
+    <h3 style="margin-bottom:4px">Pop-out Live Preview & Fullscreen Tooltips</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Output and analysis release</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Pop-out window (&#x29C9;) — opens live chart preview in a separate browser window, auto-updates on every change</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>All 7 views available in pop-out</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Fullscreen tooltips now show float labels, zone clashes, Monte Carlo P-bands and cost breakdowns correctly</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Calendar revert bug — switching from 5-day back to 7-day correctly restores original end date</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>CPM forward pass — activities no longer move backward when constraint already satisfied</span></li></ul>
   </div>
-
-  <div style="background:var(--bg);border-radius:16px;padding:32px;text-align:center;margin-top:40px">
-    <p style="font-weight:600;margin-bottom:8px">Want to suggest a feature?</p>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">We build Chainage based on what real planners need.</p>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">April 2026</div>
+    <div style="background:#1a56db;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v1.0</div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:4px">Monte Carlo Risk Engine & S-Curve View</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Major analysis release</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>PERT Beta Monte Carlo engine — 10,000 iterations using Marsaglia-Tsang gamma sampling</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Risk correlation groups — risks in same group fire together in simulation</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Monte Carlo S-Curve view with P50/P80/P90 lines and hover tooltips</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Editable grid view (Handsontable) with Excel paste, fill-handle, sort and filter</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Groups column in grid — type "Zone A / Drainage" to auto-create and assign groups</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>Critical path toggle uses proper CPM float engine</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>Shape-aware selection rings for all activity shapes</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>Right-click context menu — add, edit, delete, link activities on canvas</span></li></ul>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">April 2026</div>
+    <div style="background:#2d3a52;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v0.9</div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:4px">Calendar System</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Working day scheduling</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Visual calendar builder with month-grid day picker and non-working day marking</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Per-activity calendar assignment — 7-day and 5-day Standard built in</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Scheduler stretches/compresses activity durations based on assigned calendar</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">FIX</span><span>baseCalDays preserved across schedule runs to prevent duration compounding</span></li></ul>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">March 2026</div>
+    <div style="background:#2d3a52;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v0.8</div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:4px">UI Redesign & SaaS Launch</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Major UX overhaul</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#f3e8ff;color:#6b21a8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">SAAS</span><span>Supabase authentication — login, signup, password reset, subscription gate</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#f3e8ff;color:#6b21a8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">SAAS</span><span>Stripe subscription billing — Individual, Team, Enterprise tiers</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>Fixed sidebar navigation grouped by workflow stage</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">UX</span><span>Dark, grey, and black themes</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Resource Library with named Labour, Plant, Material resources</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>P6 synchronisation by Activity ID matching</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Baselines and revision tracking</span></li></ul>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:56px;align-items:start;border-top:1px solid var(--border);padding-top:40px">
+  <div style="text-align:right;padding-top:4px">
+    <div style="font-weight:600;font-size:15px;color:var(--ink)">Feb–Mar 2026</div>
+    <div style="background:#6b7a96;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px">v0.1–v0.6</div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:4px">Foundation & Core Features</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Initial build</p>
+    <ul style="list-style:none"><li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>HTML5 canvas time-chainage chart with drag, resize, and 6 activity shapes</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>FS/SS/FF/SF dependency links with CPM forward-pass scheduler</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Float Analysis with CPM backward pass and heatmap view</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Resource histogram, cost S-curve, and combined chart views</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Zone Occupancy clash detection view</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Risk Register with 5x5 likelihood/impact matrix</span></li>
+<li style="display:flex;gap:10px;font-size:14px;color:var(--ink2);margin-bottom:8px"><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0;height:fit-content;margin-top:2px">NEW</span><span>Save/open .tcplan files, PNG/PDF/Excel export, print multiple views</span></li></ul>
+  </div>
+</div>
+  <div style="background:var(--bg);border-radius:16px;padding:32px;text-align:center;margin-top:16px">
+    <p style="font-weight:600;color:var(--ink);margin-bottom:8px">Want to suggest a feature?</p>
+    <p style="font-size:14px;margin-bottom:16px">We build Chainage based on what real planners need.</p>
     <a href="/chainage/contact.html" class="btn-primary">Send us a message →</a>
   </div>
 </div>
 
 <footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <a class="footer-logo" href="/chainage/">
-        <div class="footer-logo-mark"><svg viewBox="0 0 24 24"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
-        Chainage
-      </a>
-      <p>Professional time-chainage planning for linear infrastructure projects. Built by planners, for planners.</p>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/chainage/" class="footer-logo">
+          <div class="footer-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="3,18 8,8 13,13 18,3"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
+          Chainage
+        </a>
+        <p>Professional time-chainage planning for linear infrastructure projects. Built by planners, for planners.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/chainage/#features">Features</a>
+        <a href="/chainage/pricing.html">Pricing</a>
+        <a href="/chainage/changelog.html">Changelog</a>
+        <a href="/chainage/docs.html">Documentation</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/chainage/contact.html">Contact</a>
+        <a href="/chainage/terms.html">Terms of Service</a>
+        <a href="/chainage/privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/chainage/docs.html">Getting Started</a>
+        <a href="/chainage/docs.html#scheduler">Scheduler Guide</a>
+        <a href="/chainage/docs.html#monte-carlo">Monte Carlo</a>
+        <a href="/chainage/app/">Launch App →</a>
+      </div>
     </div>
-    <div class="footer-col"><h4>Product</h4><a href="/chainage/#features">Features</a><a href="/chainage/pricing.html">Pricing</a><a href="/chainage/changelog.html">Changelog</a><a href="/chainage/docs.html">Documentation</a></div>
-    <div class="footer-col"><h4>Company</h4><a href="/chainage/contact.html">Contact</a><a href="/chainage/news.html">News</a><a href="/chainage/terms.html">Terms of Service</a><a href="/chainage/privacy.html">Privacy Policy</a></div>
-    <div class="footer-col"><h4>Resources</h4><a href="/chainage/docs.html">Getting Started</a><a href="/chainage/docs.html#scheduler">Scheduler Guide</a><a href="/chainage/docs.html#monte-carlo">Monte Carlo</a><a href="/chainage/app/">Launch App →</a></div>
+    <div class="footer-bottom">
+      <p>© 2026 Chainage. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="/chainage/terms.html">Terms</a>
+        <a href="/chainage/privacy.html">Privacy</a>
+        <a href="/chainage/contact.html">Contact</a>
+      </div>
+    </div>
   </div>
-  <div class="footer-bottom"><p>© 2026 Chainage. All rights reserved.</p><div class="footer-bottom-links"><a href="/chainage/terms.html">Terms</a><a href="/chainage/privacy.html">Privacy</a><a href="/chainage/contact.html">Contact</a></div></div>
 </footer>
 </body>
 </html>
